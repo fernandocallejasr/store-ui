@@ -1,4 +1,6 @@
+import products from "../../data/products";
 import PageHeading from "../PageHeading";
+import ProductListings from "../products/ProductListings";
 
 const Home = () => {
 	return (
@@ -9,6 +11,7 @@ const Home = () => {
         			unique stickers. Perfect for any occasion!
 				</p>
 			</PageHeading>
+			<ProductListings products={products}/>
 		</div>
 	);
 };
