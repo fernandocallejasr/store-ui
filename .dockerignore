@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+.npm
+
+# Build output
+dist
+build
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Formatting & Linting
+.prettierrc
+.prettierignore
+.eslintrc.cjs
+.eslintcache
+eslint.config.js
+
+# Environment & Secret files
+.env
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+.dockerignore
