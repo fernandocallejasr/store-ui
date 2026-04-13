@@ -48,6 +48,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: ci
 
+    environment:
+      name: production
+      url: ${{ vars.CLOUDFRONT_DISTRIBUTION_URL }}
+
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
