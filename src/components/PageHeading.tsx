@@ -7,7 +7,7 @@ interface PageHeadingProps extends PropsWithChildren {
 
 const PageHeading = ({ title, children }: PageHeadingProps) => {
 	return (
-		<div className="page-heading-container">
+		<div className="text-center max-w-xl mx-auto px-4 py-6">
 			<PageTitle title={title}/>
 			{ children }
 		</div>

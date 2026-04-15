@@ -7,12 +7,4 @@ describe('PageTitle Component', () => {
 
 		expect(screen.getByText("Test Title")).toBeInTheDocument();
 	});
-
-	it('should render inside a div with page-title class', () => {
-		render(<PageTitle title="Test Title" />);
-
-		const titleElement = screen.getByText("Test Title");
-
-		expect(titleElement).toHaveClass("page-title");
-	});
 });

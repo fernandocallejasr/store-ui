@@ -1,4 +1,3 @@
-import "./ProductCard.styles.css"
 import type { Product } from "./types";
 import ProductPrice from "./ProductPrice";
 
@@ -10,15 +9,19 @@ const ProductCard = ({
 	product
 }: ProductCardProps) => {
 	return (
-		<div className="product-card">
-			<div className="product-card-image-container">
-				<img src={product.imageUrl} alt={product.name} className="product-card-image"/>
+		<div className="w-72 rounded-md mx-auto border border-gray-300 shadow-md overflow-hidden flex flex-col bg-white hover:shadow-lg transition">
+			<div className="relative w-full h-72 border-b border-gray-300">
+				<img 
+					src={product.imageUrl}
+					alt={product.name}
+					className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+				/>
 			</div>
-			<div className="product-card-details">
-				<h2 className="product-card-title">{product.name}</h2>
-				<p className="product-card-description">{product.description}</p>
-				<div className="product-card-footer">
-					<div className="product-card-price">
+			<div className="relative h-48 p-4 flex flex-col font-primary">
+				<h2 className="text-xl font-semibold text-primary mb-2">{product.name}</h2>
+				<p className="text-base text-gray-600 mb-4">{product.description}</p>
+				<div className="flex items-center justify-between mt-auto">
+					<div className="bg-lighter text-purple-700 font-medium text-sm py-2 px-4 rounded-tl-md">
 						<ProductPrice currency="$" price={product.price} />
 					</div>
 				</div>
