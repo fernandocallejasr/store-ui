@@ -4,9 +4,9 @@ import ProductListings from "../products/ProductListings";
 
 const Home = () => {
 	return (
-		<div className="home-container">
+		<div className="max-w-6xl mx-auto px-6 py-8">
 			<PageHeading title="My Page Heading">
-				<p className="page-heading-paragraph">
+				<p className="font-primary leading-6 text-gray-600">
 					Add a touch of creativity to your space with our wide range of fun and
         			unique stickers. Perfect for any occasion!
 				</p>
