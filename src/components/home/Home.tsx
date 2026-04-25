@@ -18,7 +18,7 @@ const Home = () => {
 			setError(undefined);
 			const productsResponse = await getProducts();
 			setProducts(productsResponse);
-		} catch (_error) {
+		} catch {
 			setError("An error occurred fetching products. Please try again");
 		} finally {
 			setLoading(false);
@@ -32,7 +32,7 @@ const Home = () => {
 	if (loading) return(
 		<LoadingView message="Loading products…" />
 	);
-	
+
 	if (error) return (
 		<ErrorView
 			title="Something went wrong"
