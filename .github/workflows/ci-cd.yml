@@ -36,6 +36,10 @@ jobs:
         run: npm run test
 
       - name: Build
+        env:
+            VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+            VITE_AXIOS_DEFAULT_TIMEOUT: ${{ vars.VITE_AXIOS_DEFAULT_TIMEOUT }}
+            VITE_USE_MOCK_PRODUCTS: ${{ vars.VITE_USE_MOCK_PRODUCTS }}
         run: npm run build
 
       - name: Upload build artifacts
