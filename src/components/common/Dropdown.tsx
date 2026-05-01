@@ -25,7 +25,7 @@ const Dropdown = ({
 			</label>
 			<select
 				id={id}
-				className="px-3 py-2 text-base border rounded-md transition border-primary focus:ring"
+				className="px-3 py-2 text-base border rounded-md transition border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring"
 				value={selectedValue}
 				onChange={(e) => handleSelection(e.target.value)}
 			>

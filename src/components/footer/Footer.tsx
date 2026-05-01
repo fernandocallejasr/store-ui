@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Footer = () => {
 	return (
-		<footer className="flex justify-center items-center py-4 font-primary text-gray-700">
+		<footer className="flex justify-center items-center py-4 font-primary text-gray-700 dark:text-gray-300">
 			Built with
 			<FontAwesomeIcon 
 				icon={faHeart} 
