@@ -15,11 +15,11 @@ const ErrorView = ({
 		role="alert"
 		className="flex items-center justify-center min-h-[60vh] px-6"
 	>
-		<div className="max-w-md w-full text-center bg-white border border-red-100 rounded-2xl shadow-sm p-8">
-			<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+		<div className="max-w-md w-full text-center bg-white dark:bg-gray-800 border border-red-100 dark:border-red-900/40 rounded-2xl shadow-sm p-8">
+			<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/40">
 				<svg
 					aria-hidden="true"
-					className="h-6 w-6 text-red-500"
+					className="h-6 w-6 text-red-500 dark:text-red-400"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
@@ -33,16 +33,16 @@ const ErrorView = ({
 				</svg>
 			</div>
 			{title && (
-				<h2 className="font-primary font-bold text-lg text-gray-900 mb-2">
+				<h2 className="font-primary font-bold text-lg text-gray-900 dark:text-gray-100 mb-2">
 					{title}
 				</h2>
 			)}
-			<p className="font-primary text-sm text-gray-600 mb-6">{message}</p>
+			<p className="font-primary text-sm text-gray-600 dark:text-gray-400 mb-6">{message}</p>
 			{onRetry && (
 				<button
 					type="button"
 					onClick={onRetry}
-					className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 font-primary font-semibold text-sm text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+					className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 font-primary font-semibold text-sm text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
 				>
 					{retryLabel}
 				</button>

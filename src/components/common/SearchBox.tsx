@@ -13,7 +13,7 @@ const SearchBox = ({
 }: SearchBoxProps) => {
 	return (
 		<div className="relative w-xs">
-			<span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400">
+			<span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ const SearchBox = ({
 				onChange={(e) => onChange(e.target.value)}
 				placeholder={placeholder}
 				aria-label={ariaLabel}
-				className="w-full pl-10 pr-3 py-2 font-primary text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+				className="w-full pl-10 pr-3 py-2 font-primary text-base border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
 			/>
 		</div>
 	);
