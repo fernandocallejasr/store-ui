@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { ThemeContext, type Theme, THEME_STORAGE_KEY } from "./themeContextValue";
 
 const getInitialTheme = (): Theme => {
@@ -37,12 +37,14 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		return () => media.removeEventListener("change", handler);
 	}, []);
 
-	const toggleTheme = () => setTheme((prev) => (
+	const toggleTheme = useCallback(() => setTheme((prev) => (
 		prev === "dark" ? "light" : "dark"
-	));
+	)), []);
+
+	const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme]);
 
 	return (
-		<ThemeContext.Provider value={{ theme, toggleTheme }}>
+		<ThemeContext.Provider value={value}>
 			{children}
 		</ThemeContext.Provider>
 	);
