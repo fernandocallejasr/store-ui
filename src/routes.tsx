@@ -1,0 +1,23 @@
+import {
+	createRoutesFromElements,
+	Navigate,
+	Route,
+} from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import Home from "./components/home/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Login from "./pages/Login";
+import Cart from "./pages/Cart";
+import ErrorPage from "./pages/ErrorPage";
+
+export const routes = createRoutesFromElements(
+	<Route path="/" element={<MainLayout />} errorElement={<ErrorPage />}>
+		<Route index element={<Home />} />
+		<Route path="home" element={<Navigate to="/" replace />} />
+		<Route path="about" element={<About />} />
+		<Route path="contact" element={<Contact />} />
+		<Route path="login" element={<Login />} />
+		<Route path="cart" element={<Cart />} />
+	</Route>,
+);
