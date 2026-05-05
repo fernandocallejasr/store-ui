@@ -20,6 +20,8 @@ eslint.config.js
 
 # Environment & Secret files
 .env
+.env.*
+!.env.example
 .git
 .gitignore
 
