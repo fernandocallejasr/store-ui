@@ -1,19 +1,10 @@
-import Footer from "./components/footer/Footer";
-import Header from "./components/header/Header";
-import Home from "./components/home/Home";
-import { SpeedInsights } from "@vercel/speed-insights/react";
-import { Analytics } from "@vercel/analytics/react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { routes } from "./routes";
+
+const router = createBrowserRouter(routes);
 
 function App() {
-	return (
-		<>
-			<Header/>
-			<Home/>
-			<Footer/>
-			<Analytics />
-			<SpeedInsights />
-		</>
-	);
+	return <RouterProvider router={router} />;
 }
 
 export default App;
