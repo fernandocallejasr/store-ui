@@ -1,9 +1,17 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import Header from "./Header";
+
+const renderHeader = () =>
+	render(
+		<MemoryRouter>
+			<Header />
+		</MemoryRouter>,
+	);
 
 describe('Header Component', () => {
 	it('should render header element', () => {
-		render(<Header />);
+		renderHeader();
 
 		const header = screen.getByRole('banner');
 
@@ -11,7 +19,7 @@ describe('Header Component', () => {
 	});
 
 	it('should contain Stickers Shop text in header title', () => {
-		render(<Header />);
+		renderHeader();
 
 		const mainTitle = screen.getByText(/Stickers Shop/i);
 
@@ -19,7 +27,7 @@ describe('Header Component', () => {
 	});
 
 	it('should render navigation element in header', () => {
-		render(<Header />);
+		renderHeader();
 
 		const navComponent = screen.getByRole('navigation');
 
@@ -27,28 +35,20 @@ describe('Header Component', () => {
 	});
 
 	it('should render Home, About, Contact, Login links in navigation component', () => {
-		render(<Header />);
+		renderHeader();
 
-		const homeLink = screen.getByRole('link', {name: "Home"});
-		expect(homeLink).toBeInTheDocument();
-
-		const aboutLink = screen.getByRole('link', {name: "About"});
-		expect(aboutLink).toBeInTheDocument();
-
-		const contactLink = screen.getByRole('link', {name: "Contact"});
-		expect(contactLink).toBeInTheDocument();
-
-		const loginLink = screen.getByRole('link', {name: "Login"});
-		expect(loginLink).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "Home"})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "About"})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "Contact"})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "Login"})).toBeInTheDocument();
 	});
 
-	it('should render all navigation links with correct href attributes', () => {
-		render(<Header />);
+	it('should render each navigation link with the correct href', () => {
+		renderHeader();
 
-		const links = screen.getAllByRole('link');
-
-		links.forEach(link => {
-			expect(link).toHaveAttribute('href', '/');
-		});
+		expect(screen.getByRole('link', { name: "Home" })).toHaveAttribute('href', '/');
+		expect(screen.getByRole('link', { name: "About" })).toHaveAttribute('href', '/about');
+		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
+		expect(screen.getByRole('link', { name: "Login" })).toHaveAttribute('href', '/login');
 	});
 });
