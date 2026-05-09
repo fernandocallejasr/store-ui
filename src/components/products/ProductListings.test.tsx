@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import type { Product } from "./types";
 import ProductListings from "./ProductListings";
 
@@ -21,9 +22,16 @@ const mockProducts: Product[] = [
 	},
 ];
 
+const renderListings = (products: Product[]) =>
+	render(
+		<MemoryRouter>
+			<ProductListings products={products} />
+		</MemoryRouter>
+	);
+
 describe('ProductListings Component', () => {
 	it('should render product cards for each product', () => {
-		render(<ProductListings products={mockProducts} />);
+		renderListings(mockProducts);
 
 		const headings = screen.getAllByRole('heading', { level: 2 });
 
@@ -31,20 +39,20 @@ describe('ProductListings Component', () => {
 	});
 
 	it('should render each product name', () => {
-		render(<ProductListings products={mockProducts} />);
+		renderListings(mockProducts);
 
 		expect(screen.getByText("Sticker Alpha")).toBeInTheDocument();
 		expect(screen.getByText("Sticker Beta")).toBeInTheDocument();
 	});
 
 	it('should render No products found when products array is empty', () => {
-		render(<ProductListings products={[]} />);
+		renderListings([]);
 
 		expect(screen.getByText("No products found")).toBeInTheDocument();
 	});
 
 	it('should not render No products found when products exist', () => {
-		render(<ProductListings products={mockProducts} />);
+		renderListings(mockProducts);
 
 		expect(screen.queryByText("No products found")).not.toBeInTheDocument();
 	});
