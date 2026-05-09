@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import Home from "./Home";
 import { getProducts } from "../../repositories/productRepository";
 import type { Product } from "../products/types";
@@ -17,21 +18,28 @@ beforeEach(() => {
 	vi.mocked(getProducts).mockReset().mockResolvedValue(mockProducts);
 });
 
+const renderHome = () =>
+	render(
+		<MemoryRouter>
+			<Home />
+		</MemoryRouter>
+	);
+
 describe('Home Component', () => {
 	it('should render the page heading', async () => {
-		render(<Home />);
+		renderHome();
 
 		expect(await screen.findByText("My Page Heading")).toBeInTheDocument();
 	});
 
 	it('should render the descriptive paragraph', async () => {
-		render(<Home />);
+		renderHome();
 
 		expect(await screen.findByText(/Add a touch of creativity/i)).toBeInTheDocument();
 	});
 
 	it('should render product listings', async () => {
-		render(<Home />);
+		renderHome();
 
 		const productHeadings = await screen.findAllByRole('heading', { level: 2 });
 
@@ -42,7 +50,7 @@ describe('Home Component', () => {
 		// A pending promise keeps Home in the loading state for the assertion.
 		vi.mocked(getProducts).mockReturnValue(new Promise(() => {}));
 
-		render(<Home />);
+		renderHome();
 
 		expect(screen.getByRole('status')).toBeInTheDocument();
 		expect(screen.getByText(/Loading products/i)).toBeInTheDocument();
@@ -51,7 +59,7 @@ describe('Home Component', () => {
 	it('should show the error view when fetching products fails', async () => {
 		vi.mocked(getProducts).mockRejectedValueOnce(new Error("network down"));
 
-		render(<Home />);
+		renderHome();
 
 		expect(await screen.findByRole('alert')).toBeInTheDocument();
 		expect(screen.getByText(/An error occurred fetching products/i)).toBeInTheDocument();
@@ -63,7 +71,7 @@ describe('Home Component', () => {
 			.mockRejectedValueOnce(new Error("network down"))
 			.mockResolvedValueOnce(mockProducts);
 
-		render(<Home />);
+		renderHome();
 
 		const retryButton = await screen.findByRole('button', { name: /try again/i });
 		await user.click(retryButton);

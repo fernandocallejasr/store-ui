@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import type { Product } from "./types";
 import ProductCard from "./ProductCard";
 
@@ -11,9 +12,16 @@ const testProduct: Product = {
 	popularity: "Popularity"
 }
 
+const renderCard = (product: Product = testProduct) =>
+	render(
+		<MemoryRouter>
+			<ProductCard product={product} />
+		</MemoryRouter>
+	);
+
 describe('Product Card', () => {
 	it('should render product image with correct alt text', () => {
-		render(<ProductCard product={testProduct}/>);
+		renderCard();
 
 		const imageElement = screen.getByRole('img');
 
@@ -24,7 +32,7 @@ describe('Product Card', () => {
 	});
 
 	it('should render product title in heading element', () => {
-		render(<ProductCard product={testProduct}/>);
+		renderCard();
 
 		const h2Element = screen.getByRole('heading', { level: 2 });
 
@@ -33,7 +41,7 @@ describe('Product Card', () => {
 	});
 
 	it('should render product description', () => {
-		render(<ProductCard product={testProduct}/>);
+		renderCard();
 
 		const description = screen.getByText(testProduct.description);
 
@@ -41,7 +49,7 @@ describe('Product Card', () => {
 	});
 
 	it('should render product price', () => {
-		render(<ProductCard product={testProduct}/>);
+		renderCard();
 
 		const price = screen.getByText(testProduct.price.toString());
 
