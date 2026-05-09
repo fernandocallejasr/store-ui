@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import {
 	createRoutesFromElements,
 	Navigate,
@@ -11,6 +12,8 @@ import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import ErrorPage from "./pages/ErrorPage";
 
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+
 export const routes = createRoutesFromElements(
 	<Route path="/" element={<MainLayout />} errorElement={<ErrorPage />}>
 		<Route index element={<Home />} />
@@ -19,5 +22,6 @@ export const routes = createRoutesFromElements(
 		<Route path="contact" element={<Contact />} />
 		<Route path="login" element={<Login />} />
 		<Route path="cart" element={<Cart />} />
+		<Route path="products/:id" element={<ProductDetails />} />
 	</Route>,
 );
