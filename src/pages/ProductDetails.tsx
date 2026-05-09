@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import ProductPrice from "../components/products/ProductPrice";
 import LoadingView from "../components/status/LoadingView";
@@ -19,7 +19,7 @@ const ProductDetails = () => {
 	const [loading, setLoading] = useState<boolean>(!passedProduct);
 	const [error, setError] = useState<string | undefined>(undefined);
 
-	const fetchProduct = async () => {
+	const fetchProduct = useCallback(async () => {
 		const numericId = Number(id);
 		if (!Number.isInteger(numericId) || numericId <= 0) {
 			setError("Invalid product id");
@@ -37,14 +37,14 @@ const ProductDetails = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [id]);
 
 	useEffect(() => {
 		if (passedProduct)
 			return;
 
 		fetchProduct();
-	}, [id]);
+	}, [passedProduct, fetchProduct]);
 
 	if (loading) {
 		return <LoadingView message="Loading product…" />;
