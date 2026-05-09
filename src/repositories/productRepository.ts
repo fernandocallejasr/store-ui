@@ -13,3 +13,16 @@ export const getProducts = async (): Promise<Product[]> => {
 	const { data } = await apiClient.get<Product[]>(PRODUCTS_URL_PATH);
 	return data;
 };
+
+export const getProductById = async (id: number): Promise<Product> => {
+	if (useMockProducts) {
+		const product = mockProducts.find((p) => p.productId === id);
+		if (!product) 
+			throw new Error("Product not found");
+		
+		return product;
+	}
+
+	const { data } = await apiClient.get<Product>(`${PRODUCTS_URL_PATH}/${id}`);
+	return data;
+};
