@@ -22,6 +22,13 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe("CartProvider + useCart", () => {
 	beforeEach(() => {
 		localStorage.clear();
+		// addToCart/updateQuantity log a dev-only warning on invalid input;
+		// silence it so it doesn't clutter test output.
+		vi.spyOn(console, "warn").mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
 	});
 
 	it("useCart returns a safe default when used outside the provider", async () => {
@@ -134,5 +141,87 @@ describe("CartProvider + useCart", () => {
 		localStorage.setItem(CART_STORAGE_KEY, "not valid json{{{");
 		const { result } = renderHook(() => useCart(), { wrapper });
 		expect(result.current.cart).toEqual([]);
+	});
+
+	it("drops invalid stored items on hydration, keeping only valid ones", () => {
+		localStorage.setItem(
+			CART_STORAGE_KEY,
+			JSON.stringify([
+				{ product: makeProduct({ productId: 1 }), quantity: 2 },
+				{ product: makeProduct({ productId: 2 }), quantity: -5 },
+				{ garbage: true },
+			]),
+		);
+
+		const { result } = renderHook(() => useCart(), { wrapper });
+		expect(result.current.cart).toHaveLength(1);
+		expect(result.current.cart[0].product.productId).toBe(1);
+		expect(result.current.totalQuantity).toBe(2);
+	});
+
+	describe("addToCart quantity validation", () => {
+		it.each([
+			["zero", 0],
+			["a negative", -3],
+			["a fraction", 2.5],
+			["NaN", NaN],
+			["Infinity", Infinity],
+		])("ignores %s quantity (cart stays empty)", (_label, quantity) => {
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 }), quantity));
+			expect(result.current.cart).toEqual([]);
+			expect(result.current.totalQuantity).toBe(0);
+		});
+
+		it("logs a dev warning when given an invalid quantity", () => {
+			const warn = vi.spyOn(console, "warn");
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 }), -1));
+			expect(warn).toHaveBeenCalled();
+		});
+
+		it("leaves an existing line untouched when given an invalid quantity", () => {
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 }), 2));
+			act(() => result.current.addToCart(makeProduct({ productId: 1 }), NaN));
+			expect(result.current.cart[0].quantity).toBe(2);
+		});
+	});
+
+	describe("updateQuantity validation", () => {
+		it("treats 0 as a valid quantity that removes the line", () => {
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 })));
+			act(() => result.current.updateQuantity(1, 0));
+			expect(result.current.cart).toHaveLength(0);
+		});
+
+		it.each([
+			["a negative", -2],
+			["a fraction", 1.5],
+			["NaN", NaN],
+			["Infinity", Infinity],
+		])("ignores %s quantity, leaving the line unchanged", (_label, quantity) => {
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 }), 3));
+			act(() => result.current.updateQuantity(1, quantity));
+			expect(result.current.cart).toHaveLength(1);
+			expect(result.current.cart[0].quantity).toBe(3);
+		});
+
+		it("logs a dev warning when given a negative quantity", () => {
+			const warn = vi.spyOn(console, "warn");
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 })));
+			act(() => result.current.updateQuantity(1, -5));
+			expect(warn).toHaveBeenCalled();
+		});
+
+		it("still updates to a valid positive quantity", () => {
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 })));
+			act(() => result.current.updateQuantity(1, 4));
+			expect(result.current.cart[0].quantity).toBe(4);
+		});
 	});
 });
