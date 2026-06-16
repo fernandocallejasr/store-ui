@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { CartContext, CART_STORAGE_KEY, type CartItem } from "./cartContextValue";
+import { isValidQuantity, parseStoredCart } from "./cartValidation";
 import type { Product } from "../components/products/types";
+
+const warnInvalidQuantity = (method: string, quantity: number) => {
+	if (import.meta.env.DEV)
+		console.warn(`[cart] ${method}: ignored invalid quantity`, quantity);
+};
 
 const getInitialCart = (): CartItem[] => {
 	if (typeof window === "undefined")
 		return [];
 
-	try {
-		const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
-		return storedCart ? (JSON.parse(storedCart) as CartItem[]) : [];
-	} catch {
-		return [];
-	}
+	return parseStoredCart(window.localStorage.getItem(CART_STORAGE_KEY));
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -22,6 +23,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 	}, [cart]);
 
 	const addToCart = useCallback((product: Product, quantity = 1) => {
+		if (!isValidQuantity(quantity)) {
+			warnInvalidQuantity("addToCart", quantity);
+			return;
+		}
+
 		setCart((prev) => {
 			const existing = prev.find((item) => item.product.productId === product.productId);
 
@@ -41,8 +47,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 	}, []);
 
 	const updateQuantity = useCallback((productId: number, quantity: number) => {
+		if (!isValidQuantity(quantity, { allowZero: true })) {
+			warnInvalidQuantity("updateQuantity", quantity);
+			return;
+		}
+
 		setCart((prev) => {
-			if (quantity <= 0)
+			if (quantity === 0)
 				return prev.filter((item) => item.product.productId !== productId);
 
 			return prev.map((item) => (
