@@ -2,8 +2,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingBasket, faStore } from "@fortawesome/free-solid-svg-icons";
 import ThemeToggle from "../common/ThemeToggle";
 import { Link, NavLink } from "react-router-dom";
+import { useCart } from "../../context/useCart";
 
 const Header = () => {
+	const { totalQuantity } = useCart();
+	const badgeLabel = totalQuantity > 99 ? "99+" : String(totalQuantity);
+
 	const navLinkClass =
 	"text-center text-lg font-primary font-semibold text-primary py-2";
 
@@ -41,8 +45,18 @@ const Header = () => {
 							</NavLink>
 						</li>
 						<li>
-							<NavLink to="/cart" className={navLinkClass}>
+							<NavLink
+								to="/cart"
+								className={`relative ${navLinkClass}`}
+								aria-label={`Cart, ${totalQuantity} ${totalQuantity === 1 ? "item" : "items"}`}
+							>
 								<FontAwesomeIcon icon={faShoppingBasket}/>
+								<span
+									aria-hidden="true"
+									className="absolute -top-1 -right-2 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-primary text-white text-xs font-semibold"
+								>
+									{badgeLabel}
+								</span>
 							</NavLink>
 						</li>
 					</ul>

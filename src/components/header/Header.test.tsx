@@ -1,15 +1,38 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { CartProvider } from "../../context/CartContext";
+import { CART_STORAGE_KEY } from "../../context/cartContextValue";
+import type { Product } from "../products/types";
 import Header from "./Header";
+
+const makeProduct = (overrides: Partial<Product> = {}): Product => ({
+	productId: 1,
+	price: 10,
+	imageUrl: "./mockUrl.png",
+	name: "Test Product",
+	description: "A product",
+	popularity: "high",
+	...overrides,
+});
+
+const seedCart = (items: { product: Product; quantity: number }[]) => {
+	localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+};
 
 const renderHeader = () =>
 	render(
-		<MemoryRouter>
-			<Header />
-		</MemoryRouter>,
+		<CartProvider>
+			<MemoryRouter>
+				<Header />
+			</MemoryRouter>
+		</CartProvider>,
 	);
 
 describe('Header Component', () => {
+	beforeEach(() => {
+		localStorage.clear();
+	});
+
 	it('should render header element', () => {
 		renderHeader();
 
@@ -50,5 +73,36 @@ describe('Header Component', () => {
 		expect(screen.getByRole('link', { name: "About" })).toHaveAttribute('href', '/about');
 		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
 		expect(screen.getByRole('link', { name: "Login" })).toHaveAttribute('href', '/login');
+	});
+
+	describe('cart badge', () => {
+		it('shows 0 when the cart is empty', () => {
+			renderHeader();
+
+			const cartLink = screen.getByRole('link', { name: /cart/i });
+
+			expect(cartLink).toHaveTextContent('0');
+		});
+
+		it('shows the total quantity of items in the cart', () => {
+			seedCart([
+				{ product: makeProduct({ productId: 1 }), quantity: 2 },
+				{ product: makeProduct({ productId: 2 }), quantity: 3 },
+			]);
+
+			renderHeader();
+
+			const cartLink = screen.getByRole('link', { name: /cart/i });
+
+			expect(cartLink).toHaveTextContent('5');
+		});
+
+		it('caps the badge at 99+ once the total reaches 100', () => {
+			seedCart([{ product: makeProduct({ productId: 1 }), quantity: 150 }]);
+
+			renderHeader();
+
+			expect(screen.getByText('99+')).toBeInTheDocument();
+		});
 	});
 });
