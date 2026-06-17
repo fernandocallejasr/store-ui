@@ -4,6 +4,7 @@ import ProductPrice from "../components/products/ProductPrice";
 import LoadingView from "../components/status/LoadingView";
 import ErrorView from "../components/status/ErrorView";
 import { getProductById } from "../repositories/productRepository";
+import { useCart } from "../context/useCart";
 import type { Product } from "../components/products/types";
 
 interface ProductLocationState {
@@ -15,9 +16,23 @@ const ProductDetails = () => {
 	const { state } = useLocation() as { state: ProductLocationState | null };
 	const passedProduct = state?.product;
 
+	const { addToCart } = useCart();
+
 	const [product, setProduct] = useState<Product | undefined>(passedProduct);
 	const [loading, setLoading] = useState<boolean>(!passedProduct);
 	const [error, setError] = useState<string | undefined>(undefined);
+	const [quantity, setQuantity] = useState<number>(1);
+
+	const decrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+	const increment = () => setQuantity((prev) => prev + 1);
+
+	const handleAddToCart = () => {
+		if (!product)
+			return;
+
+		addToCart(product, quantity);
+		setQuantity(1);
+	};
 
 	const fetchProduct = useCallback(async () => {
 		const numericId = Number(id);
@@ -90,6 +105,41 @@ const ProductDetails = () => {
 						<span className="text-sm text-gray-500 dark:text-gray-400">
 							Popularity: <span className="font-medium">{product.popularity}</span>
 						</span>
+					</div>
+					<div className="flex items-center gap-4 mt-auto">
+						<div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-md overflow-hidden">
+							<button
+								type="button"
+								onClick={decrement}
+								disabled={quantity <= 1}
+								aria-label="Decrease quantity"
+								className="px-3 py-2 text-lg text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:bg-lighter dark:hover:bg-gray-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+							>
+								−
+							</button>
+							<span
+								data-testid="quantity"
+								aria-live="polite"
+								className="px-4 py-2 min-w-12 text-center font-medium text-primary"
+							>
+								{quantity}
+							</span>
+							<button
+								type="button"
+								onClick={increment}
+								aria-label="Increase quantity"
+								className="px-3 py-2 text-lg text-primary hover:bg-lighter dark:hover:bg-gray-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+							>
+								+
+							</button>
+						</div>
+						<button
+							type="button"
+							onClick={handleAddToCart}
+							className="bg-primary text-white font-semibold py-2 px-6 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+						>
+							Add to cart
+						</button>
 					</div>
 				</div>
 			</div>
