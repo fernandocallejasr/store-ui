@@ -77,6 +77,33 @@ describe('Product Details', () => {
 		expect(screen.getByTestId('quantity')).toHaveTextContent('2');
 	});
 
+	it('does not show the added-to-cart confirmation before adding', () => {
+		renderDetails();
+
+		expect(screen.queryByRole('status')).not.toBeInTheDocument();
+		expect(screen.queryByRole('link', { name: /view cart/i })).not.toBeInTheDocument();
+	});
+
+	it('shows a confirmation with a View cart link after adding to cart', async () => {
+		renderDetails();
+
+		await userEvent.click(screen.getByRole('button', { name: /add to cart/i }));
+
+		expect(screen.getByRole('status')).toHaveTextContent(/added to cart/i);
+		expect(screen.getByRole('link', { name: /view cart/i })).toHaveAttribute('href', '/cart');
+	});
+
+	it('hides the confirmation when the quantity changes again', async () => {
+		renderDetails();
+
+		await userEvent.click(screen.getByRole('button', { name: /add to cart/i }));
+		expect(screen.getByRole('status')).toBeInTheDocument();
+
+		await userEvent.click(screen.getByRole('button', { name: /increase quantity/i }));
+
+		expect(screen.queryByRole('status')).not.toBeInTheDocument();
+	});
+
 	it('adds the chosen quantity to the cart and resets the stepper to 1', async () => {
 		renderDetails();
 
