@@ -28,7 +28,7 @@ describe("App routing", () => {
 		renderAt("/cart");
 
 		expect(
-			await screen.findByText("Cart", { selector: "div" }),
+			await screen.findByRole("heading", { name: /your cart/i }),
 		).toBeInTheDocument();
 	});
 
