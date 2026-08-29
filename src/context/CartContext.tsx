@@ -15,11 +15,20 @@ const getInitialCart = (): CartItem[] => {
 	return parseStoredCart(window.localStorage.getItem(CART_STORAGE_KEY));
 };
 
+const persistCart = (cart: CartItem[]) => {
+	try {
+		window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+	} catch (error) {
+		if (import.meta.env.DEV)
+			console.warn("[cart] could not persist cart to localStorage", error);
+	}
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
 	const [cart, setCart] = useState<CartItem[]>(getInitialCart);
 
 	useEffect(() => {
-		window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+		persistCart(cart);
 	}, [cart]);
 
 	const addToCart = useCallback((product: Product, quantity = 1) => {
