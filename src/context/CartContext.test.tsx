@@ -125,6 +125,33 @@ describe("CartProvider + useCart", () => {
 		expect(stored[0].quantity).toBe(2);
 	});
 
+	describe("when the localStorage write fails (quota exceeded, private mode)", () => {
+		const failWrites = () =>
+			vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+				throw new DOMException("QuotaExceededError");
+			});
+
+		it("keeps the cart usable instead of crashing", () => {
+			failWrites();
+
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 }), 2));
+
+			expect(result.current.cart).toHaveLength(1);
+			expect(result.current.totalQuantity).toBe(2);
+		});
+
+		it("logs a dev warning", () => {
+			const warn = vi.spyOn(console, "warn");
+			failWrites();
+
+			const { result } = renderHook(() => useCart(), { wrapper });
+			act(() => result.current.addToCart(makeProduct({ productId: 1 })));
+
+			expect(warn).toHaveBeenCalled();
+		});
+	});
+
 	it("hydrates the cart from localStorage on mount", () => {
 		localStorage.setItem(
 			CART_STORAGE_KEY,
