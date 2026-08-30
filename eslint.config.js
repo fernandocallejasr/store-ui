@@ -20,4 +20,11 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Route table, not a component module — Fast Refresh boundaries don't apply.
+    files: ['src/routes.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

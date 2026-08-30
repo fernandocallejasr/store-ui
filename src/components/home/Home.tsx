@@ -26,6 +26,7 @@ const Home = () => {
 	};
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount; will be removed by future loader refactor
 		fetchProducts();
 	}, []);
 

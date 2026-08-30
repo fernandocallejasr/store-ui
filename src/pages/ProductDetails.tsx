@@ -43,6 +43,7 @@ const ProductDetails = () => {
 		if (passedProduct)
 			return;
 
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount; will be removed by future loader refactor
 		fetchProduct();
 	}, [passedProduct, fetchProduct]);
 
