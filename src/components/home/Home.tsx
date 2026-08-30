@@ -1,47 +1,10 @@
+import { useLoaderData } from "react-router-dom";
 import PageHeading from "../PageHeading";
 import ProductListings from "../products/ProductListings";
-import LoadingView from "../status/LoadingView";
-import ErrorView from "../status/ErrorView";
-import { useState, useEffect } from "react";
-import { getProducts } from "../../repositories/productRepository";
-import type { Product } from "../products/types";
+import type { homeLoader } from "./homeLoader";
 
 const Home = () => {
-	const [products, setProducts] = useState<Product[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | undefined>(undefined);
-
-	const fetchProducts = async () => {
-		try {
-			// TODO: cancellation on unmount.
-			setLoading(true);
-			setError(undefined);
-			const productsResponse = await getProducts();
-			setProducts(productsResponse);
-		} catch {
-			setError("An error occurred fetching products. Please try again");
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount; will be removed by future loader refactor
-		fetchProducts();
-	}, []);
-
-	if (loading) return(
-		<LoadingView message="Loading products…" />
-	);
-
-	if (error) return (
-		<ErrorView
-			title="Something went wrong"
-			message={error}
-			onRetry={fetchProducts}
-			retryLabel="Try again"
-		/>
-	);
+	const products = useLoaderData<typeof homeLoader>();
 
 	return (
 		<div className="max-w-6xl mx-auto px-6 py-8">
