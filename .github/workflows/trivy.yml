@@ -1,0 +1,44 @@
+name: trivy
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly on Monday 06:30 UTC (offset from CodeQL)
+    - cron: '30 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trivy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: filesystem scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Trivy filesystem scan (HIGH, CRITICAL)
+        # Pinned to commit SHA for supply-chain hardening (third-party action).
+        # Dependabot will keep this updated.
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+          # Note: SARIF upload to the Security tab is omitted because Code
+          # scanning requires GitHub Advanced Security on private repos.
+          # Findings appear in the workflow log; CI fails on HIGH/CRITICAL.
+          # When this repo goes public, switch format back to `sarif`,
+          # add `output: trivy-results.sarif`, restore the upload step,
+          # and re-add `security-events: write` to permissions.
