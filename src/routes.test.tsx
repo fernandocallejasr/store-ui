@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { routes } from "./routes";
+import { getProducts } from "./repositories/productRepository";
 
 vi.mock("./repositories/productRepository", () => ({
 	getProducts: vi.fn().mockResolvedValue([]),
@@ -14,6 +15,22 @@ const renderAt = (path: string) => {
 describe("App routing", () => {
 	beforeEach(() => {
 		vi.spyOn(console, "error").mockImplementation(() => {});
+		vi.mocked(getProducts).mockResolvedValue([]);
+	});
+
+	// Pins where hydrateFallbackElement lives. useNavigation() stays "idle" during
+	// initial hydration, so MainLayout's pending UI cannot cover a cold load — the
+	// fallback does. It sits on the index route rather than the root so that
+	// MainLayout keeps rendering: on the root it would replace MainLayout itself
+	// and the chrome would vanish, which this test would catch.
+	it("shows the loading view with header and footer during a cold load", () => {
+		vi.mocked(getProducts).mockReturnValue(new Promise(() => {}));
+
+		renderAt("/");
+
+		expect(screen.getByRole("status")).toBeInTheDocument();
+		expect(screen.getByRole("banner")).toBeInTheDocument();
+		expect(screen.getByRole("contentinfo")).toBeInTheDocument();
 	});
 
 	it("renders the About page at /about", async () => {

@@ -1,20 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import App from './App';
-import { getProducts } from './repositories/productRepository';
-import type { Product } from './components/products/types';
-
-const mockProducts: Product[] = [
-	{ productId: 1, price: 5, imageUrl: "/a.png", name: "Sticker A", description: "", popularity: "high" },
-	{ productId: 2, price: 7, imageUrl: "/b.png", name: "Sticker B", description: "", popularity: "low" }
-];
 
 vi.mock("./repositories/productRepository", () => ({
-	getProducts: vi.fn(),
+	getProducts: vi.fn().mockResolvedValue([
+		{ productId: 1, price: 5, imageUrl: "/a.png", name: "Sticker A", description: "", popularity: "high" },
+		{ productId: 2, price: 7, imageUrl: "/b.png", name: "Sticker B", description: "", popularity: "low" }
+	]),
 }));
-
-beforeEach(() => {
-	vi.mocked(getProducts).mockResolvedValue(mockProducts);
-});
 
 describe('App Component', () => {
 	it('should render main title', () => {
