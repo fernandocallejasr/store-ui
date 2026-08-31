@@ -1,27 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLoaderData } from "react-router-dom";
 import ProductPrice from "../components/products/ProductPrice";
 import QuantityStepper from "../components/products/QuantityStepper";
-import LoadingView from "../components/status/LoadingView";
-import ErrorView from "../components/status/ErrorView";
-import { getProductById } from "../repositories/productRepository";
 import { useCart } from "../context/useCart";
-import type { Product } from "../components/products/types";
-
-interface ProductLocationState {
-	product?: Product;
-};
+import type { productDetailsLoader } from "./productDetailsLoader";
 
 const ProductDetails = () => {
-	const { id } = useParams<{ id: string }>();
-	const { state } = useLocation() as { state: ProductLocationState | null };
-	const passedProduct = state?.product;
+	const product = useLoaderData<typeof productDetailsLoader>();
 
 	const { addToCart } = useCart();
 
-	const [product, setProduct] = useState<Product | undefined>(passedProduct);
-	const [loading, setLoading] = useState<boolean>(!passedProduct);
-	const [error, setError] = useState<string | undefined>(undefined);
 	const [quantity, setQuantity] = useState<number>(1);
 	const [justAdded, setJustAdded] = useState<boolean>(false);
 
@@ -36,54 +24,10 @@ const ProductDetails = () => {
 	};
 
 	const handleAddToCart = () => {
-		if (!product)
-			return;
-
 		addToCart(product, quantity);
 		setQuantity(1);
 		setJustAdded(true);
 	};
-
-	const fetchProduct = useCallback(async () => {
-		const numericId = Number(id);
-		if (!Number.isInteger(numericId) || numericId <= 0) {
-			setError("Invalid product id");
-			setLoading(false);
-			return;
-		}
-
-		try {
-			setLoading(true);
-			setError(undefined);
-			const result = await getProductById(numericId);
-			setProduct(result);
-		} catch {
-			setError("Could not load this product. Please try again.");
-		} finally {
-			setLoading(false);
-		}
-	}, [id]);
-
-	useEffect(() => {
-		if (passedProduct)
-			return;
-
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount; will be removed by future loader refactor
-		fetchProduct();
-	}, [passedProduct, fetchProduct]);
-
-	if (loading) {
-		return <LoadingView message="Loading product…" />;
-	}
-
-	if (error || !product) return (
-		<ErrorView
-			title="Something went wrong"
-			message={error ?? "Product not found."}
-			onRetry={fetchProduct}
-			retryLabel="Try again"
-		/>
-	);
 
 	return (
 		<div className="max-w-5xl mx-auto px-6 py-8 font-primary">

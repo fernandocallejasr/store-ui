@@ -17,7 +17,6 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
 		<div className="flex flex-col rounded-md border border-gray-300 dark:border-gray-700 shadow-md overflow-hidden bg-white dark:bg-gray-800 font-primary">
 			<Link
 				to={`/products/${product.productId}`}
-				state={{ product }}
 				aria-label={`View details for ${product.name}`}
 				className="relative block w-full h-32 border-b border-gray-300 dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
 			>
