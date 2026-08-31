@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { CartProvider } from "../context/CartContext";
 import { useCart } from "../context/useCart";
 import type { Product } from "../components/products/types";
@@ -20,44 +20,53 @@ const CartProbe = () => {
 	return <div data-testid="cart-total">{totalQuantity}</div>;
 };
 
-const renderDetails = () =>
-	render(
+const renderDetails = () => {
+	const router = createMemoryRouter(
+		[
+			{
+				path: "/products/:id",
+				loader: () => testProduct,
+				element: (
+					<>
+						<ProductDetails />
+						<CartProbe />
+					</>
+				),
+			},
+		],
+		{ initialEntries: [`/products/${testProduct.productId}`] },
+	);
+	return render(
 		<CartProvider>
-			<MemoryRouter
-				initialEntries={[
-					{ pathname: `/products/${testProduct.productId}`, state: { product: testProduct } },
-				]}
-			>
-				<Routes>
-					<Route path="/products/:id" element={<ProductDetails />} />
-				</Routes>
-				<CartProbe />
-			</MemoryRouter>
+			<RouterProvider router={router} />
 		</CartProvider>,
 	);
+};
 
 describe('Product Details', () => {
 	beforeEach(() => {
 		localStorage.clear();
 	});
 
-	it('renders the product name', () => {
+	it('renders the product name', async () => {
 		renderDetails();
 
-		expect(screen.getByRole('heading', { name: testProduct.name })).toBeInTheDocument();
+		expect(
+			await screen.findByRole('heading', { name: testProduct.name }),
+		).toBeInTheDocument();
 	});
 
-	it('starts the stepper at 1 with the decrease button disabled', () => {
+	it('starts the stepper at 1 with the decrease button disabled', async () => {
 		renderDetails();
 
-		expect(screen.getByTestId('quantity')).toHaveTextContent('1');
+		expect(await screen.findByTestId('quantity')).toHaveTextContent('1');
 		expect(screen.getByRole('button', { name: /decrease quantity/i })).toBeDisabled();
 	});
 
 	it('increments the quantity and enables the decrease button', async () => {
 		renderDetails();
 
-		await userEvent.click(screen.getByRole('button', { name: /increase quantity/i }));
+		await userEvent.click(await screen.findByRole('button', { name: /increase quantity/i }));
 
 		expect(screen.getByTestId('quantity')).toHaveTextContent('2');
 		expect(screen.getByRole('button', { name: /decrease quantity/i })).toBeEnabled();
@@ -66,7 +75,7 @@ describe('Product Details', () => {
 	it('decrements the quantity but never below 1', async () => {
 		renderDetails();
 
-		const increase = screen.getByRole('button', { name: /increase quantity/i });
+		const increase = await screen.findByRole('button', { name: /increase quantity/i });
 		const decrease = screen.getByRole('button', { name: /decrease quantity/i });
 
 		await userEvent.click(increase);
@@ -77,8 +86,10 @@ describe('Product Details', () => {
 		expect(screen.getByTestId('quantity')).toHaveTextContent('2');
 	});
 
-	it('does not show the added-to-cart confirmation before adding', () => {
+	it('does not show the added-to-cart confirmation before adding', async () => {
 		renderDetails();
+
+		await screen.findByRole('heading', { name: testProduct.name });
 
 		expect(screen.queryByRole('status')).not.toBeInTheDocument();
 		expect(screen.queryByRole('link', { name: /view cart/i })).not.toBeInTheDocument();
@@ -87,7 +98,7 @@ describe('Product Details', () => {
 	it('shows a confirmation with a View cart link after adding to cart', async () => {
 		renderDetails();
 
-		await userEvent.click(screen.getByRole('button', { name: /add to cart/i }));
+		await userEvent.click(await screen.findByRole('button', { name: /add to cart/i }));
 
 		expect(screen.getByRole('status')).toHaveTextContent(/added to cart/i);
 		expect(screen.getByRole('link', { name: /view cart/i })).toHaveAttribute('href', '/cart');
@@ -96,7 +107,7 @@ describe('Product Details', () => {
 	it('hides the confirmation when the quantity changes again', async () => {
 		renderDetails();
 
-		await userEvent.click(screen.getByRole('button', { name: /add to cart/i }));
+		await userEvent.click(await screen.findByRole('button', { name: /add to cart/i }));
 		expect(screen.getByRole('status')).toBeInTheDocument();
 
 		await userEvent.click(screen.getByRole('button', { name: /increase quantity/i }));
@@ -107,7 +118,7 @@ describe('Product Details', () => {
 	it('adds the chosen quantity to the cart and resets the stepper to 1', async () => {
 		renderDetails();
 
-		const increase = screen.getByRole('button', { name: /increase quantity/i });
+		const increase = await screen.findByRole('button', { name: /increase quantity/i });
 		await userEvent.click(increase);
 		await userEvent.click(increase);
 		expect(screen.getByTestId('quantity')).toHaveTextContent('3');

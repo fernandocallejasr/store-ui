@@ -13,6 +13,7 @@ import Cart from "./pages/Cart";
 import ErrorPage from "./pages/ErrorPage";
 import LoadingView from "./components/status/LoadingView";
 import { homeLoader } from "./components/home/homeLoader";
+import { productDetailsLoader } from "./pages/productDetailsLoader";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 
@@ -30,6 +31,12 @@ export const routes = createRoutesFromElements(
 		<Route path="contact" element={<Contact />} />
 		<Route path="login" element={<Login />} />
 		<Route path="cart" element={<Cart />} />
-		<Route path="products/:id" element={<ProductDetails />} />
+		<Route
+			path="products/:id"
+			element={<ProductDetails />}
+			loader={productDetailsLoader}
+			errorElement={<ErrorPage />}
+			hydrateFallbackElement={<LoadingView message="Loading…" />}
+		/>
 	</Route>,
 );

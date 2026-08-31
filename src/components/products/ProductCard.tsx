@@ -16,7 +16,6 @@ const ProductCard = ({
 		<div className="w-72 mx-auto rounded-md border border-gray-300 dark:border-gray-700 shadow-md overflow-hidden flex flex-col bg-white dark:bg-gray-800 hover:shadow-lg transition">
 			<Link
 				to={`/products/${product.productId}`}
-				state={{ product }}
 				aria-label={`View details for ${product.name}`}
 				className="block rounded-t-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
 			>
