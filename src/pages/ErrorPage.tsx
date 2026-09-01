@@ -26,7 +26,6 @@ const ErrorPage = () => {
 				{title}
 			</h1>
 			<p className="text-gray-600 dark:text-gray-400 mb-6">{message}</p>
-			{/* Revalidating a 404 just re-runs a loader that will 404 again. */}
 			{!isNotFound && (
 				<button
 					type="button"
