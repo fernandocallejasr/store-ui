@@ -5,6 +5,13 @@ export interface User {
 	mobileNumber: string;
 }
 
+export type AuthUser = Pick<User, "userId" | "name">;
+
+export interface Session {
+	jwtToken: string;
+	user: AuthUser;
+}
+
 export interface LoginCredentials {
 	username: string;
 	password: string;
