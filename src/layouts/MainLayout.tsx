@@ -9,13 +9,15 @@ const MainLayout = () => {
 	const isLoading = navigation.state === "loading";
 
 	return (
-		<>
+		<div className="min-h-screen flex flex-col">
 			<Header />
-			<Suspense fallback={<LoadingView message="Loading…" />}>
-				{isLoading ? <LoadingView message="Loading…" /> : <Outlet />}
-			</Suspense>
+			<main className="flex-1 flex flex-col">
+				<Suspense fallback={<LoadingView message="Loading…" />}>
+					{isLoading ? <LoadingView message="Loading…" /> : <Outlet />}
+				</Suspense>
+			</main>
 			<Footer />
-		</>
+		</div>
 	);
 };
 
