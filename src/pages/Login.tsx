@@ -1,7 +1,109 @@
+import { Form, useActionData, useNavigation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStore } from "@fortawesome/free-solid-svg-icons";
+import PasswordField from "../components/auth/PasswordField";
+import type { LoginActionResult } from "./loginAction";
+import { useEffect } from "react";
+import { useAuth } from "../context/useAuth";
+
+const ERROR_ID = "login-error";
+
 const Login = () => {
+	const result = useActionData() as LoginActionResult | undefined;
+	const navigation = useNavigation();
+	const { loginSuccess } = useAuth();
+
+	const submitting = navigation.state === "submitting";
+	const error = result?.status === "error" ? result.message : null;
+	const success = result?.status === "success" ? result.response.message : null;
+
+	useEffect(() => {
+		if (result?.status !== "success")
+			return
+
+		const { jwtToken, user } = result.response;
+		if (jwtToken && user)
+			loginSuccess(jwtToken, user);
+		
+	}, [ result, loginSuccess ]);
+
 	return (
-		<div>
-			Login
+		<div className="grid md:grid-cols-2 flex-1 font-primary">
+			<div
+				aria-hidden="true"
+				className="relative hidden md:block bg-gray-900 bg-[url('/login-hero.jpg')] bg-cover bg-center"
+			>
+				<div className="absolute inset-0 bg-black/50 backdrop-saturate-50" />
+			</div>
+
+			<div className="flex items-center justify-center px-6 py-12">
+				<div className="w-full max-w-sm">
+					<FontAwesomeIcon
+						icon={faStore}
+						className="h-9 w-9 text-primary"
+						aria-hidden="true"
+					/>
+					<h1 className="mt-6 text-3xl font-semibold text-primary">Welcome back</h1>
+					<p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+						Sign in to your Stickers Shop account.
+					</p>
+
+					{error && (
+						<p
+							id={ERROR_ID}
+							role="alert"
+							className="mt-6 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+						>
+							{error}
+						</p>
+					)}
+
+					{success && (
+						<p
+							role="status"
+							className="mt-6 rounded-lg border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300"
+						>
+							{success}
+						</p>
+					)}
+
+					<Form method="post" noValidate className="mt-6 space-y-4">
+						<div>
+							<label
+								htmlFor="username"
+								className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+							>
+								Username
+							</label>
+							<input
+								id="username"
+								name="username"
+								type="text"
+								autoComplete="username"
+								required
+								aria-invalid={Boolean(error) || undefined}
+								aria-describedby={error ? ERROR_ID : undefined}
+								className="w-full px-3 py-2.5 text-base border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+							/>
+						</div>
+
+						<PasswordField
+							name="password"
+							label="Password"
+							invalid={Boolean(error)}
+							describedBy={error ? ERROR_ID : undefined}
+						/>
+
+						<button
+							type="submit"
+							disabled={submitting}
+							className="w-full rounded-full bg-primary py-3 text-base font-semibold text-white transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+						>
+							{submitting ? "Signing in…" : "Log in"}
+						</button>
+					</Form>
+				</div>
+			</div>
 		</div>
 	);
 };

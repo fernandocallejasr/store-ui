@@ -14,6 +14,7 @@ import ErrorPage from "./pages/ErrorPage";
 import LoadingView from "./components/status/LoadingView";
 import { homeLoader } from "./components/home/homeLoader";
 import { productDetailsLoader } from "./pages/productDetailsLoader";
+import { loginAction } from "./pages/loginAction";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 
@@ -29,7 +30,7 @@ export const routes = createRoutesFromElements(
 		<Route path="home" element={<Navigate to="/" replace />} />
 		<Route path="about" element={<About />} />
 		<Route path="contact" element={<Contact />} />
-		<Route path="login" element={<Login />} />
+		<Route path="login" element={<Login />} action={loginAction} />
 		<Route path="cart" element={<Cart />} />
 		<Route
 			path="products/:id"
