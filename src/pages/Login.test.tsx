@@ -1,10 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { RouterProvider, createMemoryRouter, type ActionFunction } from "react-router-dom";
+import { Outlet, RouterProvider, createMemoryRouter, type ActionFunction } from "react-router-dom";
 import Login from "./Login";
 import type { LoginActionResult } from "./loginAction";
 import { AuthProvider } from "../context/AuthContext";
 import { useAuth } from "../context/useAuth";
+import { REDIRECT_PATH_STORAGE_KEY } from "../components/auth/ProtectedRoute";
 import type { User } from "../components/auth/types";
 
 const testUser: User = {
@@ -32,14 +33,17 @@ const renderLogin = (action: ActionFunction = () => null) => {
 	const router = createMemoryRouter(
 		[
 			{
-				path: "/login",
 				element: (
 					<>
-						<Login />
+						<Outlet />
 						<AuthProbe />
 					</>
 				),
-				action,
+				children: [
+					{ path: "/login", element: <Login />, action },
+					{ path: "/", element: <h1>Home page</h1> },
+					{ path: "/cart", element: <h1>Cart page</h1> },
+				],
 			},
 		],
 		{ initialEntries: ["/login"] },
@@ -61,6 +65,7 @@ const fillAndSubmit = async (username: string, password: string) => {
 describe("Login page", () => {
 	beforeEach(() => {
 		localStorage.clear();
+		sessionStorage.clear();
 	});
 
 	it("renders a username field, a password field and a submit button", () => {
@@ -121,9 +126,7 @@ describe("Login page", () => {
 		renderLogin(() => result);
 		await fillAndSubmit("myuser", "secret");
 
-		expect(await screen.findByTestId("auth-state")).toHaveTextContent(
-			"authenticated:My User",
-		);
+		expect(await screen.findByText("authenticated:My User")).toBeInTheDocument();
 	});
 
 	it("stays anonymous when a successful response carries no token", async () => {
@@ -153,6 +156,47 @@ describe("Login page", () => {
 
 		expect(await screen.findByRole("status")).toHaveTextContent("Correctly logged in");
 		expect(screen.getByTestId("auth-state")).toHaveTextContent("anonymous");
+	});
+
+	it("sends the visitor home when nothing was remembered", async () => {
+		const result: LoginActionResult = {
+			status: "success",
+			response: { message: "Correctly logged in", user: testUser, jwtToken: "a.b.c" },
+		};
+
+		renderLogin(() => result);
+		await fillAndSubmit("myuser", "secret");
+
+		expect(await screen.findByRole("heading", { name: "Home page" })).toBeInTheDocument();
+	});
+
+	it("returns the visitor to the page they were sent from", async () => {
+		sessionStorage.setItem(REDIRECT_PATH_STORAGE_KEY, "/cart");
+		const result: LoginActionResult = {
+			status: "success",
+			response: { message: "Correctly logged in", user: testUser, jwtToken: "a.b.c" },
+		};
+
+		renderLogin(() => result);
+		await fillAndSubmit("myuser", "secret");
+
+		expect(await screen.findByRole("heading", { name: "Cart page" })).toBeInTheDocument();
+
+		expect(sessionStorage.getItem(REDIRECT_PATH_STORAGE_KEY)).toBeNull();
+	});
+
+	it("stays on the login page when no session could be established", async () => {
+		sessionStorage.setItem(REDIRECT_PATH_STORAGE_KEY, "/cart");
+		const result: LoginActionResult = {
+			status: "success",
+			response: { message: "Correctly logged in", user: null, jwtToken: null },
+		};
+
+		renderLogin(() => result);
+		await fillAndSubmit("myuser", "secret");
+
+		expect(await screen.findByRole("status")).toHaveTextContent("Correctly logged in");
+		expect(screen.queryByRole("heading", { name: "Cart page" })).not.toBeInTheDocument();
 	});
 
 	it("disables the submit button while the action is running", async () => {

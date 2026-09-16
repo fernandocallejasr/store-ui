@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { routes } from "./routes";
 import { getProductById, getProducts } from "./repositories/productRepository";
+import { AuthProvider } from "./context/AuthContext";
+import { SESSION_STORAGE_KEY } from "./context/authContextValue";
 import type { Product } from "./components/products/types";
+import type { Session } from "./components/auth/types";
 
 vi.mock("./repositories/productRepository", () => ({
 	getProducts: vi.fn(),
@@ -18,13 +21,24 @@ const testProduct: Product = {
 	popularity: "high",
 };
 
+const testSession: Session = { jwtToken: "a.b.c", user: { userId: 1, name: "My User" } };
+
+const signIn = () =>
+	localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(testSession));
+
 const renderAt = (path: string) => {
 	const router = createMemoryRouter(routes, { initialEntries: [path] });
-	return render(<RouterProvider router={router} />);
+	return render(
+		<AuthProvider>
+			<RouterProvider router={router} />
+		</AuthProvider>,
+	);
 };
 
 describe("App routing", () => {
 	beforeEach(() => {
+		localStorage.clear();
+		sessionStorage.clear();
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		vi.mocked(getProducts).mockReset().mockResolvedValue([]);
 		vi.mocked(getProductById).mockReset().mockResolvedValue(testProduct);
@@ -53,12 +67,23 @@ describe("App routing", () => {
 		).toBeInTheDocument();
 	});
 
-	it("renders the Cart page at /cart", async () => {
+	it("renders the Cart page at /cart for a signed-in visitor", async () => {
+		signIn();
+
 		renderAt("/cart");
 
 		expect(
 			await screen.findByRole("heading", { name: /your cart/i }),
 		).toBeInTheDocument();
+	});
+
+	it("sends an anonymous visitor from /cart to the login page", async () => {
+		renderAt("/cart");
+
+		expect(
+			await screen.findByRole("heading", { name: /welcome back/i }),
+		).toBeInTheDocument();
+		expect(screen.queryByRole("heading", { name: /your cart/i })).not.toBeInTheDocument();
 	});
 
 	it("redirects /home to the index route", async () => {

@@ -1,16 +1,19 @@
-import { Form, useActionData, useNavigation } from "react-router-dom";
+import { Form, useActionData, useNavigate, useNavigation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStore } from "@fortawesome/free-solid-svg-icons";
 import PasswordField from "../components/auth/PasswordField";
 import type { LoginActionResult } from "./loginAction";
 import { useEffect } from "react";
 import { useAuth } from "../context/useAuth";
+import { HOME_PATH, REDIRECT_PATH_STORAGE_KEY } from "../components/auth/ProtectedRoute";
+import { safeSessionStorage } from "../lib/safeStorage";
 
 const ERROR_ID = "login-error";
 
 const Login = () => {
 	const result = useActionData() as LoginActionResult | undefined;
 	const navigation = useNavigation();
+	const navigate = useNavigate();
 	const { loginSuccess } = useAuth();
 
 	const submitting = navigation.state === "submitting";
@@ -22,10 +25,16 @@ const Login = () => {
 			return
 
 		const { jwtToken, user } = result.response;
-		if (jwtToken && user)
-			loginSuccess(jwtToken, user);
-		
-	}, [ result, loginSuccess ]);
+		if (!jwtToken || !user)
+			return
+
+		loginSuccess(jwtToken, user);
+
+		const originPagePath = safeSessionStorage.read(REDIRECT_PATH_STORAGE_KEY) || HOME_PATH;
+		safeSessionStorage.clear(REDIRECT_PATH_STORAGE_KEY);
+
+		navigate(originPagePath, { replace: true });
+	}, [ result, loginSuccess, navigate ]);
 
 	return (
 		<div className="grid md:grid-cols-2 flex-1 font-primary">
