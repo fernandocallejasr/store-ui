@@ -1,9 +1,18 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 import { CartProvider } from "../../context/CartContext";
 import { CART_STORAGE_KEY } from "../../context/cartContextValue";
+import { AuthProvider } from "../../context/AuthContext";
+import { SESSION_STORAGE_KEY } from "../../context/authContextValue";
 import type { Product } from "../products/types";
+import type { Session } from "../auth/types";
 import Header from "./Header";
+
+const testSession: Session = { jwtToken: "a.b.c", user: { userId: 1, name: "My User" } };
+
+const signIn = () =>
+	localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(testSession));
 
 const makeProduct = (overrides: Partial<Product> = {}): Product => ({
 	productId: 1,
@@ -21,11 +30,13 @@ const seedCart = (items: { product: Product; quantity: number }[]) => {
 
 const renderHeader = () =>
 	render(
-		<CartProvider>
-			<MemoryRouter>
-				<Header />
-			</MemoryRouter>
-		</CartProvider>,
+		<AuthProvider>
+			<CartProvider>
+				<MemoryRouter>
+					<Header />
+				</MemoryRouter>
+			</CartProvider>
+		</AuthProvider>,
 	);
 
 describe('Header Component', () => {
@@ -73,6 +84,35 @@ describe('Header Component', () => {
 		expect(screen.getByRole('link', { name: "About" })).toHaveAttribute('href', '/about');
 		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
 		expect(screen.getByRole('link', { name: "Login" })).toHaveAttribute('href', '/login');
+	});
+
+	describe('signed-in state', () => {
+		it('shows the Login link while anonymous, and no user menu', () => {
+			renderHeader();
+
+			expect(screen.getByRole('link', { name: "Login" })).toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: /my user/i })).not.toBeInTheDocument();
+		});
+
+		it('replaces the Login link with the user menu once signed in', () => {
+			signIn();
+
+			renderHeader();
+
+			expect(screen.getByRole('button', { name: /my user/i })).toBeInTheDocument();
+			expect(screen.queryByRole('link', { name: "Login" })).not.toBeInTheDocument();
+		});
+
+		it('logging out brings the Login link back', async () => {
+			signIn();
+			renderHeader();
+
+			await userEvent.click(screen.getByRole('button', { name: /my user/i }));
+			await userEvent.click(screen.getByRole('button', { name: "Log out" }));
+
+			expect(screen.getByRole('link', { name: "Login" })).toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: /my user/i })).not.toBeInTheDocument();
+		});
 	});
 
 	describe('cart badge', () => {

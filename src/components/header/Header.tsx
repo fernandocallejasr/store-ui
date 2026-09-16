@@ -3,9 +3,12 @@ import { faShoppingBasket, faStore } from "@fortawesome/free-solid-svg-icons";
 import ThemeToggle from "../common/ThemeToggle";
 import { Link, NavLink } from "react-router-dom";
 import { useCart } from "../../context/useCart";
+import { useAuth } from "../../context/useAuth";
+import UserMenu from "../auth/UserMenu";
 
 const Header = () => {
 	const { totalQuantity } = useCart();
+	const { isAuthenticated } = useAuth();
 	const badgeLabel = totalQuantity > 99 ? "99+" : String(totalQuantity);
 
 	const navLinkClass =
@@ -40,9 +43,13 @@ const Header = () => {
 							</NavLink>
 						</li>
 						<li>
-							<NavLink to="/login" className={navLinkClassFn}>
-								Login
-							</NavLink>
+							{isAuthenticated ? (
+								<UserMenu />
+							) : (
+								<NavLink to="/login" className={navLinkClassFn}>
+									Login
+								</NavLink>
+							)}
 						</li>
 						<li>
 							<NavLink
