@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Stickers Shop">
+	<rect width="32" height="32" rx="7" fill="#c76f51"/>
+	<path d="M4.5 9.5h23l2 5.5h-27z" fill="#fff"/>
+	<path d="M6 16.5h20v11H6z" fill="#fff"/>
+	<rect x="13" y="20" width="6" height="7.5" rx="0.8" fill="#c76f51"/>
+</svg>
