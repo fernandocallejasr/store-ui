@@ -1,41 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { AuthContext, SESSION_STORAGE_KEY, type AuthContextValue } from "./authContextValue";
 import type { AuthUser, Session, User } from "../components/auth/types";
+import { safeLocalStorage } from "../lib/safeStorage";
 
 const toAuthUser = (user: AuthUser): AuthUser => ({ userId: user.userId, name: user.name });
 
-const warnStorage = (action: string, error: unknown) => {
-	if (import.meta.env.DEV)
-		console.warn(`[auth] could not ${action} localStorage`, error);
-};
-
-const readStorage = (key: string): string | null => {
-	try {
-		return window.localStorage.getItem(key);
-	} catch (error) {
-		warnStorage("read", error);
-		return null;
-	}
-};
-
-const writeStorage = (key: string, value: string) => {
-	try {
-		window.localStorage.setItem(key, value);
-	} catch (error) {
-		warnStorage("write to", error);
-	}
-};
-
-const clearStorage = (key: string) => {
-	try {
-		window.localStorage.removeItem(key);
-	} catch (error) {
-		warnStorage("clear", error);
-	}
-};
-
 function getInitialSession(): Session | null {
-	const storedSession = readStorage(SESSION_STORAGE_KEY);
+	const storedSession = safeLocalStorage.read(SESSION_STORAGE_KEY);
 	if (!storedSession)
 		return null;
 
@@ -62,11 +33,11 @@ function getInitialSession(): Session | null {
 
 function storeSession(session: Session | null) {
 	if (session == null) {
-		clearStorage(SESSION_STORAGE_KEY);
+		safeLocalStorage.clear(SESSION_STORAGE_KEY);
 		return;
 	}
 
-	writeStorage(SESSION_STORAGE_KEY, JSON.stringify(session));
+	safeLocalStorage.write(SESSION_STORAGE_KEY, JSON.stringify(session));
 }
 
 export const AuthProvider = ({ children } : { children: ReactNode }) => {
