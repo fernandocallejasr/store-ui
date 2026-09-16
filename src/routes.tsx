@@ -15,6 +15,7 @@ import LoadingView from "./components/status/LoadingView";
 import { homeLoader } from "./components/home/homeLoader";
 import { productDetailsLoader } from "./pages/productDetailsLoader";
 import { loginAction } from "./pages/loginAction";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 
@@ -31,7 +32,9 @@ export const routes = createRoutesFromElements(
 		<Route path="about" element={<About />} />
 		<Route path="contact" element={<Contact />} />
 		<Route path="login" element={<Login />} action={loginAction} />
-		<Route path="cart" element={<Cart />} />
+		<Route element={<ProtectedRoute />}>
+			<Route path="cart" element={<Cart />} />
+		</Route>
 		<Route
 			path="products/:id"
 			element={<ProductDetails />}
