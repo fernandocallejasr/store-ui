@@ -86,6 +86,14 @@ describe("App routing", () => {
 		expect(screen.queryByRole("heading", { name: /your cart/i })).not.toBeInTheDocument();
 	});
 
+	it("renders the Register page at /register", async () => {
+		renderAt("/register");
+
+		expect(
+			await screen.findByRole("heading", { name: /create an account/i }),
+		).toBeInTheDocument();
+	});
+
 	it("redirects /home to the index route", async () => {
 		renderAt("/home");
 
