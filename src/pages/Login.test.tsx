@@ -6,6 +6,7 @@ import type { LoginActionResult } from "./loginAction";
 import { AuthProvider } from "../context/AuthContext";
 import { useAuth } from "../context/useAuth";
 import { REDIRECT_PATH_STORAGE_KEY } from "../components/auth/ProtectedRoute";
+import { REGISTERED_QUERY_PARAM } from "./registerAction";
 import type { User } from "../components/auth/types";
 
 const testUser: User = {
@@ -29,7 +30,7 @@ const AuthProbe = () => {
 	);
 };
 
-const renderLogin = (action: ActionFunction = () => null) => {
+const renderLogin = (action: ActionFunction = () => null, path = "/login") => {
 	const router = createMemoryRouter(
 		[
 			{
@@ -46,7 +47,7 @@ const renderLogin = (action: ActionFunction = () => null) => {
 				],
 			},
 		],
-		{ initialEntries: ["/login"] },
+		{ initialEntries: [path] },
 	);
 
 	return render(
@@ -74,6 +75,44 @@ describe("Login page", () => {
 		expect(screen.getByLabelText("Username")).toBeInTheDocument();
 		expect(screen.getByLabelText("Password")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Log in" })).toBeInTheDocument();
+	});
+
+	// The field is labelled Username but the backend registers the email as the
+	// username, so the hint has to be on the field itself: a banner competes
+	// with the error message and disappears exactly when it is needed.
+	describe("the username hint", () => {
+		it("tells the visitor which identifier the field wants", () => {
+			renderLogin();
+
+			expect(screen.getByLabelText("Username")).toHaveAccessibleDescription(
+				/email address/i,
+			);
+		});
+
+		it("survives alongside the error after a failed attempt", async () => {
+			const result: LoginActionResult = {
+				status: "error",
+				message: "Incorrect username or password.",
+			};
+
+			renderLogin(() => result);
+			await fillAndSubmit("ghost", "secret");
+
+			await screen.findByRole("alert");
+
+			const username = screen.getByLabelText("Username");
+			expect(username).toHaveAccessibleDescription(/email address/i);
+			expect(username).toHaveAccessibleDescription(/incorrect username or password/i);
+		});
+	});
+
+	it("offers a way to the register page", () => {
+		renderLogin();
+
+		expect(screen.getByRole("link", { name: /register/i })).toHaveAttribute(
+			"href",
+			"/register",
+		);
 	});
 
 	it("posts both field values to the route action", async () => {
@@ -197,6 +236,40 @@ describe("Login page", () => {
 
 		expect(await screen.findByRole("status")).toHaveTextContent("Correctly logged in");
 		expect(screen.queryByRole("heading", { name: "Cart page" })).not.toBeInTheDocument();
+	});
+
+	describe("arriving from the register page", () => {
+		it("explains that the account was created and which identifier to use", () => {
+			renderLogin(() => null, `/login?${REGISTERED_QUERY_PARAM}=1`);
+
+			const banner = screen.getByRole("status");
+			expect(banner).toHaveTextContent(/registration successful/i);
+			expect(banner).toHaveTextContent(/email/i);
+		});
+
+		it("shows no such banner on an ordinary visit", () => {
+			renderLogin();
+
+			expect(screen.queryByRole("status")).not.toBeInTheDocument();
+		});
+
+		// Once the visitor has tried to sign in, the answer to that attempt is the
+		// only thing worth reading. Leaving the arrival banner up stacks a green
+		// "registration successful" against a red "incorrect password".
+		it("drops the banner once a failed attempt has been answered", async () => {
+			const result: LoginActionResult = {
+				status: "error",
+				message: "Incorrect username or password.",
+			};
+
+			renderLogin(() => result, `/login?${REGISTERED_QUERY_PARAM}=1`);
+			await fillAndSubmit("myuser", "wrong");
+
+			expect(await screen.findByRole("alert")).toHaveTextContent(
+				"Incorrect username or password.",
+			);
+			expect(screen.queryByRole("status")).not.toBeInTheDocument();
+		});
 	});
 
 	it("disables the submit button while the action is running", async () => {
