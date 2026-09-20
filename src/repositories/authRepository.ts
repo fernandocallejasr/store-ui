@@ -1,7 +1,14 @@
 import apiClient from "../api/apiClient";
-import type { LoginCredentials, LoginResponse, User } from "../components/auth/types";
+import type {
+	LoginCredentials,
+	LoginResponse,
+	RegisterCredentials,
+	User,
+} from "../components/auth/types";
 
 const LOGIN_URL_PATH = "/auth/login";
+const REGISTER_URL_PATH = "/auth/register";
+const CREATED_STATUS = 201;
 
 const isUserShape = (value: unknown): boolean => {
 	if (typeof value !== "object" || value === null)
@@ -28,8 +35,6 @@ const isLoginResponse = (value: unknown): value is LoginResponse => {
 	return true;
 };
 
-// No Authorization header: PublicPathConfig lists /api/v1/auth/** and
-// StickerStoreSecurityConfig permits it, so the endpoint is open.
 export const login = async (
 	credentials: LoginCredentials,
 	signal?: AbortSignal,
@@ -42,4 +47,20 @@ export const login = async (
 		throw new Error("Login failed: the response body was not a LoginResponse");
 
 	return data;
+};
+
+// The body is not worth validating - it is the plain string "Registration
+// successful" and the caller only redirects - but the status is. A 2xx does not
+// prove the account exists: a CloudFront Custom Error Response turns a failed
+// POST into a 200 serving index.html, which axios resolves happily. login()
+// refuses that body for the same reason; here the status is all there is to
+// check, and announcing an account that was never created is the worse lie.
+export const register = async (
+	credentials: RegisterCredentials,
+	signal?: AbortSignal,
+): Promise<void> => {
+	const { status } = await apiClient.post(REGISTER_URL_PATH, credentials, { signal });
+
+	if (status !== CREATED_STATUS)
+		throw new Error(`Registration failed: expected 201 Created but the server answered ${status}`);
 };

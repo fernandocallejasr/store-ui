@@ -1,13 +1,20 @@
 import type { AxiosResponse } from "axios";
 import apiClient from "../api/apiClient";
-import { login } from "./authRepository";
-import type { LoginResponse } from "../components/auth/types";
+import { login, register } from "./authRepository";
+import type { LoginResponse, RegisterCredentials } from "../components/auth/types";
 
 vi.mock("../api/apiClient", () => ({
 	default: { post: vi.fn() },
 }));
 
 const credentials = { username: "myuser", password: "secret" };
+
+const registration: RegisterCredentials = {
+	name: "My User",
+	email: "myuser@example.com",
+	mobileNumber: "5550000000",
+	password: "supersecret",
+};
 
 const loginResponse: LoginResponse = {
 	message: "Correctly logged in",
@@ -101,5 +108,76 @@ describe("authRepository.login", () => {
 		vi.mocked(apiClient.post).mockRejectedValue(failure);
 
 		await expect(login(credentials)).rejects.toBe(failure);
+	});
+});
+
+describe("authRepository.register", () => {
+	// The endpoint commits to 201 Created, so the status is the whole contract
+	// and the tests have to carry it.
+	const resolveCreated = (body: unknown) =>
+		vi.mocked(apiClient.post).mockResolvedValue({
+			status: 201,
+			data: body,
+		} as AxiosResponse<unknown>);
+
+	beforeEach(() => {
+		vi.mocked(apiClient.post).mockReset();
+	});
+
+	it("posts the registration to the register endpoint with the abort signal", async () => {
+		resolveCreated("Registration successful");
+		const controller = new AbortController();
+
+		await register(registration, controller.signal);
+
+		expect(apiClient.post).toHaveBeenCalledWith("/auth/register", registration, {
+			signal: controller.signal,
+		});
+	});
+
+	// The body itself is not worth validating: it is the plain string
+	// "Registration successful" and nothing downstream reads it. The status is.
+	it.each([
+		["the plain-text success body", "Registration successful"],
+		["an empty body", ""],
+		["a JSON body, should the endpoint ever return one", { message: "Registration successful" }],
+	])("resolves with nothing given a 201 carrying %s", async (_label, body) => {
+		resolveCreated(body);
+
+		await expect(register(registration)).resolves.toBeUndefined();
+	});
+
+	// The reason this check exists at all. A CloudFront Custom Error Response
+	// rewrites a failed POST into a 200 serving the SPA shell, so a request that
+	// created nothing arrives looking like a success. login() already refuses to
+	// be fooled by validating its body; register has only the status to go on,
+	// and reporting a phantom account is worse than reporting a failure.
+	it("rejects a 200 serving the SPA shell instead of reporting a phantom account", async () => {
+		vi.mocked(apiClient.post).mockResolvedValue({
+			status: 200,
+			data: SPA_FALLBACK_HTML,
+		} as AxiosResponse<unknown>);
+
+		await expect(register(registration)).rejects.toThrow(/201/);
+	});
+
+	it.each([
+		["200 OK", 200],
+		["202 Accepted", 202],
+		["204 No Content", 204],
+	])("rejects a %s, which the endpoint never promises", async (_label, status) => {
+		vi.mocked(apiClient.post).mockResolvedValue({
+			status,
+			data: "",
+		} as AxiosResponse<unknown>);
+
+		await expect(register(registration)).rejects.toThrow(/201/);
+	});
+
+	it("lets a request failure propagate to the caller", async () => {
+		const failure = new Error("Network Error");
+		vi.mocked(apiClient.post).mockRejectedValue(failure);
+
+		await expect(register(registration)).rejects.toBe(failure);
 	});
 });
