@@ -51,6 +51,13 @@ const Header = () => {
 								</NavLink>
 							)}
 						</li>
+						{!isAuthenticated && (
+							<li>
+								<NavLink to="/register" className={navLinkClassFn}>
+									Register
+								</NavLink>
+							</li>
+						)}
 						<li>
 							<NavLink
 								to="/cart"

@@ -68,13 +68,14 @@ describe('Header Component', () => {
 		expect(navComponent).toBeInTheDocument();
 	});
 
-	it('should render Home, About, Contact, Login links in navigation component', () => {
+	it('should render Home, About, Contact, Login, Register links in navigation component', () => {
 		renderHeader();
 
 		expect(screen.getByRole('link', {name: "Home"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "About"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Contact"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Login"})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "Register"})).toBeInTheDocument();
 	});
 
 	it('should render each navigation link with the correct href', () => {
@@ -84,6 +85,7 @@ describe('Header Component', () => {
 		expect(screen.getByRole('link', { name: "About" })).toHaveAttribute('href', '/about');
 		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
 		expect(screen.getByRole('link', { name: "Login" })).toHaveAttribute('href', '/login');
+		expect(screen.getByRole('link', { name: "Register" })).toHaveAttribute('href', '/register');
 	});
 
 	describe('signed-in state', () => {
@@ -101,6 +103,14 @@ describe('Header Component', () => {
 
 			expect(screen.getByRole('button', { name: /my user/i })).toBeInTheDocument();
 			expect(screen.queryByRole('link', { name: "Login" })).not.toBeInTheDocument();
+		});
+
+		it('hides the Register link from someone who already has an account', () => {
+			signIn();
+
+			renderHeader();
+
+			expect(screen.queryByRole('link', { name: "Register" })).not.toBeInTheDocument();
 		});
 
 		it('logging out brings the Login link back', async () => {
