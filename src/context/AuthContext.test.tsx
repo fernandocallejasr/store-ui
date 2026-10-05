@@ -90,6 +90,7 @@ describe("AuthProvider + useAuth", () => {
 		["an empty token", '{"jwtToken":"","user":{"userId":1,"name":"My User"}}'],
 		["a missing token", '{"user":{"userId":1,"name":"My User"}}'],
 		["a non-string token", '{"jwtToken":123,"user":{"userId":1,"name":"My User"}}'],
+		["a token that is not a JWT", '{"jwtToken":"not-a-jwt","user":{"userId":1,"name":"My User"}}'],
 		["a token but no user", '{"jwtToken":"a.b.c"}'],
 		["a userId of the wrong type", '{"jwtToken":"a.b.c","user":{"userId":"1","name":"My User"}}'],
 		["a user with no name", '{"jwtToken":"a.b.c","user":{"userId":1}}'],
@@ -117,6 +118,21 @@ describe("AuthProvider + useAuth", () => {
 
 		act(() => result.current.loginSuccess("", testUser));
 
+		expect(result.current.isAuthenticated).toBe(false);
+		expect(result.current.session).toBeNull();
+		expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+	});
+
+	it.each([
+		["a token that is not a JWT", "not-a-jwt"],
+		["a token carrying a CRLF", "a.b.c\r\nX-Injected: 1"],
+	])("loginSuccess refuses %s", (_label, jwtToken) => {
+		const { result } = renderHook(() => useAuth(), { wrapper });
+
+		act(() => result.current.loginSuccess(jwtToken, testUser));
+
+		// A session the API client would refuse to send must not be one the UI
+		// believes in either.
 		expect(result.current.isAuthenticated).toBe(false);
 		expect(result.current.session).toBeNull();
 		expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
