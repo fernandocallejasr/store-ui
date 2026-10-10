@@ -1,7 +1,11 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/useAuth";
+
+const menuItemClass =
+	"w-full flex items-center gap-2 px-4 py-2 text-left text-base font-primary text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary";
 
 const UserMenu = () => {
 	const { session, logOut } = useAuth();
@@ -65,13 +69,21 @@ const UserMenu = () => {
 					id={panelId}
 					className="absolute right-0 mt-2 w-44 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-1 z-30"
 				>
+					<Link
+						to="/profile"
+						onClick={() => setOpen(false)}
+						className={menuItemClass}
+					>
+						<FontAwesomeIcon icon={faUser} aria-hidden="true" />
+						Profile
+					</Link>
 					<button
 						type="button"
 						onClick={() => {
 							setOpen(false);
 							logOut();
 						}}
-						className="w-full flex items-center gap-2 px-4 py-2 text-left text-base font-primary text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+						className={menuItemClass}
 					>
 						<FontAwesomeIcon icon={faRightFromBracket} aria-hidden="true" />
 						Log out

@@ -11,10 +11,12 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
+import Profile from "./pages/Profile";
 import ErrorPage from "./pages/ErrorPage";
 import LoadingView from "./components/status/LoadingView";
 import { homeLoader } from "./components/home/homeLoader";
 import { productDetailsLoader } from "./pages/productDetailsLoader";
+import { profileLoader } from "./pages/profileLoader";
 import { loginAction } from "./pages/loginAction";
 import { registerAction } from "./pages/registerAction";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
@@ -37,6 +39,13 @@ export const routes = createRoutesFromElements(
 		<Route path="register" element={<Register />} action={registerAction} />
 		<Route element={<ProtectedRoute />}>
 			<Route path="cart" element={<Cart />} />
+			<Route
+				path="profile"
+				element={<Profile />}
+				loader={profileLoader}
+				errorElement={<ErrorPage />}
+				hydrateFallbackElement={<LoadingView message="Loading…" />}
+			/>
 		</Route>
 		<Route
 			path="products/:id"

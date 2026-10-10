@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { act, render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AuthProvider } from "./AuthContext";
 import { useAuth } from "./useAuth";
 import { SESSION_STORAGE_KEY } from "./authContextValue";
+import { endSession } from "./sessionEvents";
 import type { AuthUser, Session, User } from "../components/auth/types";
 
 const testUser: User = {
@@ -80,6 +82,7 @@ describe("AuthProvider + useAuth", () => {
 		expect(result.current.session?.user).toEqual(storedUser);
 		expect(result.current.session?.user).not.toHaveProperty("email");
 		expect(result.current.session?.user).not.toHaveProperty("mobileNumber");
+		expect(JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)!)).toEqual(testSession);
 	});
 
 	it.each([
@@ -111,6 +114,27 @@ describe("AuthProvider + useAuth", () => {
 		expect(result.current.isAuthenticated).toBe(true);
 		expect(result.current.session).toEqual(testSession);
 		expect(JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)!)).toEqual(testSession);
+	});
+
+	// Inside act() nothing re-renders until the callback returns, so these see
+	// storage as a loader started by the same navigation would.
+	it("loginSuccess persists the session before React re-renders", () => {
+		const { result } = renderHook(() => useAuth(), { wrapper });
+
+		act(() => {
+			result.current.loginSuccess("a.b.c", testUser);
+			expect(JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)!)).toEqual(testSession);
+		});
+	});
+
+	it("logOut clears storage before React re-renders", () => {
+		seedStorage(testSession);
+		const { result } = renderHook(() => useAuth(), { wrapper });
+
+		act(() => {
+			result.current.logOut();
+			expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+		});
 	});
 
 	it("loginSuccess refuses an empty token and leaves the session alone", () => {
@@ -168,6 +192,37 @@ describe("AuthProvider + useAuth", () => {
 
 		expect(result.current.isAuthenticated).toBe(false);
 		expect(result.current.session).toBeNull();
+		expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+	});
+
+	it("logs out when the session is ended from outside React", () => {
+		seedStorage(testSession);
+		const { result } = renderHook(() => useAuth(), { wrapper });
+
+		act(() => endSession());
+
+		expect(result.current.isAuthenticated).toBe(false);
+		expect(result.current.session).toBeNull();
+		expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+	});
+
+	it("is listening before any passive effect can end the session", () => {
+		seedStorage(testSession);
+		const EndsSessionOnMount = () => {
+			useEffect(() => endSession(), []);
+			return null;
+		};
+
+		const { result } = renderHook(() => useAuth(), {
+			wrapper: ({ children }: { children: React.ReactNode }) => (
+				<AuthProvider>
+					<EndsSessionOnMount />
+					{children}
+				</AuthProvider>
+			),
+		});
+
+		expect(result.current.isAuthenticated).toBe(false);
 		expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
 	});
 

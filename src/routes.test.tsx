@@ -1,15 +1,28 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
+import { AxiosError, type AxiosResponse } from "axios";
 import { routes } from "./routes";
 import { getProductById, getProducts } from "./repositories/productRepository";
+import { getProfile } from "./repositories/profileRepository";
+import { login } from "./repositories/authRepository";
 import { AuthProvider } from "./context/AuthContext";
 import { SESSION_STORAGE_KEY } from "./context/authContextValue";
 import type { Product } from "./components/products/types";
-import type { Session } from "./components/auth/types";
+import type { Session, User } from "./components/auth/types";
 
 vi.mock("./repositories/productRepository", () => ({
 	getProducts: vi.fn(),
 	getProductById: vi.fn(),
+}));
+
+vi.mock("./repositories/profileRepository", () => ({
+	getProfile: vi.fn(),
+}));
+
+vi.mock("./repositories/authRepository", () => ({
+	login: vi.fn(),
+	register: vi.fn(),
 }));
 
 const testProduct: Product = {
@@ -22,6 +35,19 @@ const testProduct: Product = {
 };
 
 const testSession: Session = { jwtToken: "a.b.c", user: { userId: 1, name: "My User" } };
+
+const testProfile: User = {
+	userId: 1,
+	name: "Renamed User",
+	email: "myuser@example.com",
+	mobileNumber: "5550000000",
+};
+
+const axiosErrorWithStatus = (status: number): AxiosError => {
+	const error = new AxiosError("Request failed");
+	error.response = { status } as AxiosResponse;
+	return error;
+};
 
 const signIn = () =>
 	localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(testSession));
@@ -42,6 +68,7 @@ describe("App routing", () => {
 		vi.spyOn(console, "error").mockImplementation(() => {});
 		vi.mocked(getProducts).mockReset().mockResolvedValue([]);
 		vi.mocked(getProductById).mockReset().mockResolvedValue(testProduct);
+		vi.mocked(getProfile).mockReset().mockResolvedValue(testProfile);
 	});
 
 	// Pins where hydrateFallbackElement lives. useNavigation() stays "idle" during
@@ -84,6 +111,78 @@ describe("App routing", () => {
 			await screen.findByRole("heading", { name: /welcome back/i }),
 		).toBeInTheDocument();
 		expect(screen.queryByRole("heading", { name: /your cart/i })).not.toBeInTheDocument();
+	});
+
+	it("renders /profile from the endpoint, not from the user stored at login", async () => {
+		signIn();
+
+		renderAt("/profile");
+
+		expect(
+			await screen.findByRole("heading", { name: /your profile/i }),
+		).toBeInTheDocument();
+		expect(screen.getByText(testProfile.name)).toBeInTheDocument();
+		expect(getProfile).toHaveBeenCalledWith(expect.any(AbortSignal));
+	});
+
+	it("sends an anonymous visitor from /profile to the login page without calling the API", async () => {
+		renderAt("/profile");
+
+		expect(
+			await screen.findByRole("heading", { name: /welcome back/i }),
+		).toBeInTheDocument();
+		expect(getProfile).not.toHaveBeenCalled();
+	});
+
+	it.each([401, 404])(
+		"signs the visitor out and sends them to login when /profile answers %i",
+		async (status) => {
+			signIn();
+			vi.mocked(getProfile).mockRejectedValue(axiosErrorWithStatus(status));
+
+			renderAt("/profile");
+
+			expect(
+				await screen.findByRole("heading", { name: /welcome back/i }),
+			).toBeInTheDocument();
+			expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument();
+			expect(screen.queryByRole("button", { name: /my user/i })).not.toBeInTheDocument();
+			expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+		},
+	);
+
+	it("returns to /profile after logging out there and logging back in", async () => {
+		signIn();
+		vi.mocked(login).mockResolvedValue({
+			message: "Correctly logged in",
+			user: { ...testProfile, name: "My User" },
+			jwtToken: "a.b.c",
+		});
+		renderAt("/profile");
+		await screen.findByRole("heading", { name: /your profile/i });
+
+		await userEvent.click(screen.getByRole("button", { name: /my user/i }));
+		await userEvent.click(screen.getByRole("button", { name: "Log out" }));
+		await screen.findByRole("heading", { name: /welcome back/i });
+		await userEvent.type(screen.getByLabelText("Username"), "myuser@example.com");
+		await userEvent.type(screen.getByLabelText("Password"), "secret");
+		await userEvent.click(screen.getByRole("button", { name: "Log in" }));
+
+		expect(
+			await screen.findByRole("heading", { name: /your profile/i }),
+		).toBeInTheDocument();
+	});
+
+	it("renders the ErrorPage, keeping the visitor signed in, when /profile fails otherwise", async () => {
+		signIn();
+		vi.mocked(getProfile).mockRejectedValue(axiosErrorWithStatus(500));
+
+		renderAt("/profile");
+
+		expect(
+			await screen.findByRole("heading", { name: /something went wrong/i }),
+		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /my user/i })).toBeInTheDocument();
 	});
 
 	it("renders the Register page at /register", async () => {
