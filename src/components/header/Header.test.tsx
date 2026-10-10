@@ -113,6 +113,21 @@ describe('Header Component', () => {
 			expect(screen.queryByRole('link', { name: "Register" })).not.toBeInTheDocument();
 		});
 
+		it('offers no Profile link while anonymous', () => {
+			renderHeader();
+
+			expect(screen.queryByRole('link', { name: "Profile" })).not.toBeInTheDocument();
+		});
+
+		it('offers Profile in the user menu once signed in', async () => {
+			signIn();
+			renderHeader();
+
+			await userEvent.click(screen.getByRole('button', { name: /my user/i }));
+
+			expect(screen.getByRole('link', { name: "Profile" })).toHaveAttribute('href', '/profile');
+		});
+
 		it('logging out brings the Login link back', async () => {
 			signIn();
 			renderHeader();

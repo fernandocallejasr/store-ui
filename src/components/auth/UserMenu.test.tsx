@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import UserMenu from "./UserMenu";
 import { AuthProvider } from "../../context/AuthContext";
@@ -14,13 +15,16 @@ const signIn = () =>
 const renderMenu = () =>
 	render(
 		<AuthProvider>
-			<UserMenu />
-			<button type="button">Outside</button>
+			<MemoryRouter>
+				<UserMenu />
+				<button type="button">Outside</button>
+			</MemoryRouter>
 		</AuthProvider>,
 	);
 
 const trigger = () => screen.getByRole("button", { name: /my user/i });
 const logOutButton = () => screen.queryByRole("button", { name: "Log out" });
+const profileLink = () => screen.queryByRole("link", { name: "Profile" });
 
 describe("UserMenu", () => {
 	beforeEach(() => {
@@ -92,6 +96,26 @@ describe("UserMenu", () => {
 		await userEvent.click(screen.getByRole("button", { name: "Outside" }));
 
 		expect(logOutButton()).not.toBeInTheDocument();
+	});
+
+	it("links to the profile page", async () => {
+		signIn();
+		renderMenu();
+
+		await userEvent.click(trigger());
+
+		expect(profileLink()).toHaveAttribute("href", "/profile");
+	});
+
+	it("closes the panel when Profile is followed", async () => {
+		signIn();
+		renderMenu();
+		await userEvent.click(trigger());
+
+		await userEvent.click(profileLink()!);
+
+		expect(profileLink()).not.toBeInTheDocument();
+		expect(trigger()).toHaveAttribute("aria-expanded", "false");
 	});
 
 	it("logging out clears the session and removes the menu", async () => {

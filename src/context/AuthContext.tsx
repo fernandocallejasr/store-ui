@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 import { AuthContext, SESSION_STORAGE_KEY, type AuthContextValue } from "./authContextValue";
 import { isJwtShaped, parseStoredSession, toAuthUser } from "./sessionValidation";
+import { onSessionEnded } from "./sessionEvents";
 import type { Session, User } from "../components/auth/types";
 import { safeLocalStorage } from "../lib/safeStorage";
 
@@ -30,11 +31,28 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => {
 			return;
 		}
 
-		setSession({ jwtToken, user: toAuthUser(user) });
+		const next = { jwtToken, user: toAuthUser(user) };
+
+		// Stored now rather than by the effect below: Login navigates straight after
+		// this call, and the next route's loader reads the session from storage
+		// before React re-renders.
+		storeSession(next);
+		setSession(next);
 	}, []);
 
-	const logOut = useCallback(() => setSession(null), []);
+	const logOut = useCallback(() => {
+		storeSession(null);
+		setSession(null);
+	}, []);
 
+	// A layout effect subscribes in the same task as the first render. The router
+	// starts loaders before React renders, and a passive effect would leave a gap
+	// in which one of them could end the session unheard.
+	useLayoutEffect(() => onSessionEnded(logOut), [logOut]);
+
+	// loginSuccess and logOut persist their own changes. On mount this also
+	// overwrites storage with the validated session, which drops contact details
+	// saved by older versions and removes data that is not a valid session.
 	useEffect(() => {
 		storeSession(session);
 	}, [session]);
