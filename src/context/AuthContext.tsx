@@ -50,6 +50,21 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => {
 	// in which one of them could end the session unheard.
 	useLayoutEffect(() => onSessionEnded(logOut), [logOut]);
 
+	// Logins and logouts in other tabs; a null key means one cleared storage. This
+	// writes nothing: the effect below writes back the same validated string the
+	// other tab stored, and browsers fire no storage event for an unchanged value.
+	useLayoutEffect(() => {
+		const syncFromOtherTab = (event: StorageEvent) => {
+			if (event.key !== SESSION_STORAGE_KEY && event.key !== null)
+				return;
+
+			setSession(parseStoredSession(event.newValue));
+		};
+
+		window.addEventListener("storage", syncFromOtherTab);
+		return () => window.removeEventListener("storage", syncFromOtherTab);
+	}, []);
+
 	// loginSuccess and logOut persist their own changes. On mount this also
 	// overwrites storage with the validated session, which drops contact details
 	// saved by older versions and removes data that is not a valid session.

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { AuthProvider } from "./AuthContext";
 import { useAuth } from "./useAuth";
 import { SESSION_STORAGE_KEY } from "./authContextValue";
+import { CART_STORAGE_KEY } from "./cartContextValue";
 import { endSession } from "./sessionEvents";
 import type { AuthUser, Session, User } from "../components/auth/types";
 
@@ -30,6 +31,22 @@ const breakStorage = (method: "getItem" | "setItem" | "removeItem", name: string
 	vi.spyOn(Storage.prototype, method).mockImplementation(() => {
 		throw new DOMException("storage is not available", name);
 	});
+
+// jsdom does not deliver storage events between windows, so this stands in for
+// another tab: it changes storage, then fires the event that change raises here.
+// A null key is localStorage.clear().
+const changeInAnotherTab = (key: string | null, newValue: string | null) => {
+	act(() => {
+		if (key === null)
+			localStorage.clear();
+		else if (newValue === null)
+			localStorage.removeItem(key);
+		else
+			localStorage.setItem(key, newValue);
+
+		window.dispatchEvent(new StorageEvent("storage", { key, newValue }));
+	});
+};
 
 describe("AuthProvider + useAuth", () => {
 	beforeEach(() => {
@@ -224,6 +241,71 @@ describe("AuthProvider + useAuth", () => {
 
 		expect(result.current.isAuthenticated).toBe(false);
 		expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
+	});
+
+	describe("when another tab changes storage", () => {
+		it("logs out when another tab removes the session", () => {
+			seedStorage(testSession);
+			const { result } = renderHook(() => useAuth(), { wrapper });
+
+			changeInAnotherTab(SESSION_STORAGE_KEY, null);
+
+			expect(result.current.isAuthenticated).toBe(false);
+			expect(result.current.session).toBeNull();
+		});
+
+		it("picks up a session that another tab stored", () => {
+			const { result } = renderHook(() => useAuth(), { wrapper });
+
+			changeInAnotherTab(SESSION_STORAGE_KEY, JSON.stringify(testSession));
+
+			expect(result.current.isAuthenticated).toBe(true);
+			expect(result.current.session).toEqual(testSession);
+		});
+
+		it("treats an invalid session from another tab as logged out", () => {
+			seedStorage(testSession);
+			const { result } = renderHook(() => useAuth(), { wrapper });
+
+			changeInAnotherTab(
+				SESSION_STORAGE_KEY,
+				'{"jwtToken":"not-a-jwt","user":{"userId":1,"name":"My User"}}',
+			);
+
+			expect(result.current.isAuthenticated).toBe(false);
+			expect(result.current.session).toBeNull();
+		});
+
+		it("logs out when another tab clears all of storage", () => {
+			seedStorage(testSession);
+			const { result } = renderHook(() => useAuth(), { wrapper });
+
+			changeInAnotherTab(null, null);
+
+			expect(result.current.isAuthenticated).toBe(false);
+			expect(result.current.session).toBeNull();
+		});
+
+		it("ignores changes to other keys", () => {
+			seedStorage(testSession);
+			const { result } = renderHook(() => useAuth(), { wrapper });
+
+			changeInAnotherTab(CART_STORAGE_KEY, "[]");
+
+			expect(result.current.session).toEqual(testSession);
+		});
+
+		it("leaves another tab's session in storage exactly as that tab wrote it", () => {
+			const written = JSON.stringify(testSession);
+			const { result } = renderHook(() => useAuth(), { wrapper });
+
+			changeInAnotherTab(SESSION_STORAGE_KEY, written);
+
+			// Browsers fire no storage event for a write that leaves the value as it
+			// was, so the tabs do not echo the change back and forth.
+			expect(result.current.session).toEqual(testSession);
+			expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBe(written);
+		});
 	});
 
 	describe("when the browser refuses localStorage", () => {
