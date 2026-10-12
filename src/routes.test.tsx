@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 import { AxiosError, type AxiosResponse } from "axios";
@@ -150,6 +150,26 @@ describe("App routing", () => {
 			expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
 		},
 	);
+
+	it("sends the visitor from /profile to login, hiding their details, when another tab logs out", async () => {
+		signIn();
+		renderAt("/profile");
+		expect(await screen.findByText(testProfile.email)).toBeInTheDocument();
+
+		// jsdom does not deliver storage events between windows, so this raises the
+		// one that another tab's logout would.
+		act(() => {
+			localStorage.removeItem(SESSION_STORAGE_KEY);
+			window.dispatchEvent(
+				new StorageEvent("storage", { key: SESSION_STORAGE_KEY, newValue: null }),
+			);
+		});
+
+		expect(
+			await screen.findByRole("heading", { name: /welcome back/i }),
+		).toBeInTheDocument();
+		expect(screen.queryByText(testProfile.email)).not.toBeInTheDocument();
+	});
 
 	it("returns to /profile after logging out there and logging back in", async () => {
 		signIn();
