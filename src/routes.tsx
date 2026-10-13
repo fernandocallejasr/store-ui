@@ -37,8 +37,8 @@ export const routes = createRoutesFromElements(
 		<Route path="contact" element={<Contact />} />
 		<Route path="login" element={<Login />} action={loginAction} />
 		<Route path="register" element={<Register />} action={registerAction} />
+		<Route path="cart" element={<Cart />} />
 		<Route element={<ProtectedRoute />}>
-			<Route path="cart" element={<Cart />} />
 			<Route
 				path="profile"
 				element={<Profile />}

@@ -43,7 +43,7 @@ const renderLogin = (action: ActionFunction = () => null, path = "/login") => {
 				children: [
 					{ path: "/login", element: <Login />, action },
 					{ path: "/", element: <h1>Home page</h1> },
-					{ path: "/cart", element: <h1>Cart page</h1> },
+					{ path: "/profile", element: <h1>Profile page</h1> },
 				],
 			},
 		],
@@ -210,7 +210,7 @@ describe("Login page", () => {
 	});
 
 	it("returns the visitor to the page they were sent from", async () => {
-		sessionStorage.setItem(REDIRECT_PATH_STORAGE_KEY, "/cart");
+		sessionStorage.setItem(REDIRECT_PATH_STORAGE_KEY, "/profile");
 		const result: LoginActionResult = {
 			status: "success",
 			response: { message: "Correctly logged in", user: testUser, jwtToken: "a.b.c" },
@@ -219,13 +219,13 @@ describe("Login page", () => {
 		renderLogin(() => result);
 		await fillAndSubmit("myuser", "secret");
 
-		expect(await screen.findByRole("heading", { name: "Cart page" })).toBeInTheDocument();
+		expect(await screen.findByRole("heading", { name: "Profile page" })).toBeInTheDocument();
 
 		expect(sessionStorage.getItem(REDIRECT_PATH_STORAGE_KEY)).toBeNull();
 	});
 
 	it("stays on the login page when no session could be established", async () => {
-		sessionStorage.setItem(REDIRECT_PATH_STORAGE_KEY, "/cart");
+		sessionStorage.setItem(REDIRECT_PATH_STORAGE_KEY, "/profile");
 		const result: LoginActionResult = {
 			status: "success",
 			response: { message: "Correctly logged in", user: null, jwtToken: null },
@@ -235,7 +235,7 @@ describe("Login page", () => {
 		await fillAndSubmit("myuser", "secret");
 
 		expect(await screen.findByRole("status")).toHaveTextContent("Correctly logged in");
-		expect(screen.queryByRole("heading", { name: "Cart page" })).not.toBeInTheDocument();
+		expect(screen.queryByRole("heading", { name: "Profile page" })).not.toBeInTheDocument();
 	});
 
 	describe("arriving from the register page", () => {

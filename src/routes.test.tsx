@@ -104,13 +104,13 @@ describe("App routing", () => {
 		).toBeInTheDocument();
 	});
 
-	it("sends an anonymous visitor from /cart to the login page", async () => {
+	it("renders the Cart page at /cart for an anonymous visitor", async () => {
 		renderAt("/cart");
 
 		expect(
-			await screen.findByRole("heading", { name: /welcome back/i }),
+			await screen.findByRole("heading", { name: /your cart/i }),
 		).toBeInTheDocument();
-		expect(screen.queryByRole("heading", { name: /your cart/i })).not.toBeInTheDocument();
+		expect(screen.queryByRole("heading", { name: /welcome back/i })).not.toBeInTheDocument();
 	});
 
 	it("renders /profile from the endpoint, not from the user stored at login", async () => {
