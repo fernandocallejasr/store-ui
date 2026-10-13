@@ -33,7 +33,7 @@ const ProductCard = ({
 			</Link>
 			<div className="px-4 pb-4 mt-auto flex items-center justify-between gap-4 font-primary">
 				<div className="bg-lighter dark:bg-gray-700 text-purple-700 dark:text-light font-medium text-sm py-2 px-4 rounded-md">
-					<ProductPrice currency="$" price={product.price} />
+					<ProductPrice price={product.price} />
 				</div>
 				<button
 					type="button"

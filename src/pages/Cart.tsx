@@ -50,7 +50,7 @@ const Cart = () => {
 						<p className="text-lg font-semibold text-primary">
 							Total:{" "}
 							<span data-testid="cart-total-price">
-								<ProductPrice currency="$" price={total} />
+								<ProductPrice price={total} />
 							</span>
 						</p>
 					</div>

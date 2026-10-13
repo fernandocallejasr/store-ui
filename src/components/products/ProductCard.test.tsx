@@ -66,9 +66,7 @@ describe('Product Card', () => {
 	it('should render product price', () => {
 		renderCard();
 
-		const price = screen.getByText(testProduct.price.toString());
-
-		expect(price).toBeInTheDocument();
+		expect(screen.getByText("$89.00")).toBeInTheDocument();
 	});
 
 	it('links to the product details page', () => {

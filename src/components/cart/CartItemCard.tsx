@@ -32,12 +32,12 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
 				</h3>
 				<div className="flex items-end justify-between text-sm text-gray-600 dark:text-gray-400">
 					<span data-testid="line-breakdown">
-						{quantity} × <ProductPrice currency="$" price={product.price} />
+						{quantity} × <ProductPrice price={product.price} />
 					</span>
 					<span className="text-right leading-tight">
 						<span className="block text-xs text-gray-500 dark:text-gray-400">Subtotal</span>
 						<span data-testid="line-subtotal" className="font-medium text-primary">
-							<ProductPrice currency="$" price={subtotal} />
+							<ProductPrice price={subtotal} />
 						</span>
 					</span>
 				</div>

@@ -28,4 +28,16 @@ describe('PageHeading Component', () => {
 		expect(screen.getByText("My Title")).toBeInTheDocument();
 		expect(screen.getByText("Extra content")).toBeInTheDocument();
 	});
+
+	it('renders the title as the page heading', () => {
+		render(<PageHeading title="My Title" />);
+
+		expect(screen.getByRole('heading', { level: 1, name: 'My Title' })).toBeInTheDocument();
+	});
+
+	it('shows a supporting fact beside the title when given one', () => {
+		render(<PageHeading title="Your cart" meta="3 items" />);
+
+		expect(screen.getByText("3 items")).toBeInTheDocument();
+	});
 });
