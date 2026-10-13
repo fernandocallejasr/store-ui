@@ -68,11 +68,10 @@ describe('Header Component', () => {
 		expect(navComponent).toBeInTheDocument();
 	});
 
-	it('should render Home, About, Contact, Login, Register links in navigation component', () => {
+	it('should render Home, Contact, Login, Register links in navigation component', () => {
 		renderHeader();
 
 		expect(screen.getByRole('link', {name: "Home"})).toBeInTheDocument();
-		expect(screen.getByRole('link', {name: "About"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Contact"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Login"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Register"})).toBeInTheDocument();
@@ -82,7 +81,6 @@ describe('Header Component', () => {
 		renderHeader();
 
 		expect(screen.getByRole('link', { name: "Home" })).toHaveAttribute('href', '/');
-		expect(screen.getByRole('link', { name: "About" })).toHaveAttribute('href', '/about');
 		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
 		expect(screen.getByRole('link', { name: "Login" })).toHaveAttribute('href', '/login');
 		expect(screen.getByRole('link', { name: "Register" })).toHaveAttribute('href', '/register');

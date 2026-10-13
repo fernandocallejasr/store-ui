@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./components/home/Home";
-import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -33,7 +32,6 @@ export const routes = createRoutesFromElements(
 			hydrateFallbackElement={<LoadingView message="Loading…" />}
 		/>
 		<Route path="home" element={<Navigate to="/" replace />} />
-		<Route path="about" element={<About />} />
 		<Route path="contact" element={<Contact />} />
 		<Route path="login" element={<Login />} action={loginAction} />
 		<Route path="register" element={<Register />} action={registerAction} />
