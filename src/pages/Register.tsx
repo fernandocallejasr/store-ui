@@ -2,14 +2,13 @@ import { Form, Link, useActionData, useNavigation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStore } from "@fortawesome/free-solid-svg-icons";
 import PasswordField from "../components/auth/PasswordField";
+import AuthHero from "../components/auth/AuthHero";
+import Button from "../components/common/Button";
+import { inlineLinkClass } from "../components/common/buttonStyles";
+import { formAlertClass, inputClass, labelClass } from "../components/common/fieldStyles";
 import type { RegisterActionResult } from "./registerAction";
 
 const ERROR_ID = "register-error";
-
-const inputClassName =
-	"w-full px-3 py-2.5 text-base border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent";
-
-const labelClassName = "block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300";
 
 const Register = () => {
 	const result = useActionData() as RegisterActionResult | undefined;
@@ -31,32 +30,23 @@ const Register = () => {
 	const describedBy = error ? ERROR_ID : undefined;
 
 	return (
-		<div className="grid md:grid-cols-2 flex-1 font-primary">
-			<div
-				aria-hidden="true"
-				className="relative hidden md:block bg-gray-900 bg-[url('/login-hero.jpg')] bg-cover bg-center"
-			>
-				<div className="absolute inset-0 bg-black/50 backdrop-saturate-50" />
-			</div>
+		<div className="grid flex-1 md:grid-cols-2">
+			<AuthHero />
 
-			<div className="flex items-center justify-center px-6 py-12">
+			<div className="flex items-center justify-center px-4 py-12 sm:px-6">
 				<div className="w-full max-w-sm">
 					<FontAwesomeIcon
 						icon={faStore}
-						className="h-9 w-9 text-primary"
+						className="h-8 w-8 text-primary"
 						aria-hidden="true"
 					/>
-					<h1 className="mt-6 text-3xl font-semibold text-primary">Create an account</h1>
-					<p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+					<h1 className="mt-6 text-3xl font-semibold tracking-tight text-primary">Create an account</h1>
+					<p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
 						Join the Stickers Shop in a few seconds.
 					</p>
 
 					{error && (
-						<div
-							id={ERROR_ID}
-							role="alert"
-							className="mt-6 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
-						>
+						<div id={ERROR_ID} role="alert" className={formAlertClass}>
 							<p>{error}</p>
 							{fieldMessages.length > 0 && (
 								<ul className="mt-2 list-disc space-y-1 pl-5">
@@ -70,7 +60,7 @@ const Register = () => {
 
 					<Form method="post" noValidate className="mt-6 space-y-4">
 						<div>
-							<label htmlFor="name" className={labelClassName}>
+							<label htmlFor="name" className={labelClass}>
 								Name
 							</label>
 							<input
@@ -81,12 +71,12 @@ const Register = () => {
 								required
 								aria-invalid={invalid("name")}
 								aria-describedby={describedBy}
-								className={inputClassName}
+								className={inputClass}
 							/>
 						</div>
 
 						<div>
-							<label htmlFor="mobileNumber" className={labelClassName}>
+							<label htmlFor="mobileNumber" className={labelClass}>
 								Mobile number
 							</label>
 							<input
@@ -98,12 +88,12 @@ const Register = () => {
 								required
 								aria-invalid={invalid("mobileNumber")}
 								aria-describedby={describedBy}
-								className={inputClassName}
+								className={inputClass}
 							/>
 						</div>
 
 						<div>
-							<label htmlFor="email" className={labelClassName}>
+							<label htmlFor="email" className={labelClass}>
 								Email
 							</label>
 							<input
@@ -114,7 +104,7 @@ const Register = () => {
 								required
 								aria-invalid={invalid("email")}
 								aria-describedby={describedBy}
-								className={inputClassName}
+								className={inputClass}
 							/>
 						</div>
 
@@ -134,21 +124,14 @@ const Register = () => {
 							describedBy={describedBy}
 						/>
 
-						<button
-							type="submit"
-							disabled={submitting}
-							className="w-full rounded-full bg-primary py-3 text-base font-semibold text-on-primary transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-						>
+						<Button type="submit" size="lg" disabled={submitting} className="w-full">
 							{submitting ? "Creating account…" : "Create account"}
-						</button>
+						</Button>
 					</Form>
 
-					<p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
+					<p className="mt-6 text-sm text-slate-600 dark:text-slate-400">
 						Already have an account?{" "}
-						<Link
-							to="/login"
-							className="font-semibold text-primary underline hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
-						>
+						<Link to="/login" className={inlineLinkClass}>
 							Log in
 						</Link>
 					</p>
