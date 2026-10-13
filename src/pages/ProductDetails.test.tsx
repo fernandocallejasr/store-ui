@@ -128,4 +128,24 @@ describe('Product Details', () => {
 		expect(screen.getByTestId('cart-total')).toHaveTextContent('3');
 		expect(screen.getByTestId('quantity')).toHaveTextContent('1');
 	});
+
+	it('offers a way back to all stickers', async () => {
+		renderDetails();
+
+		expect(await screen.findByRole('link', { name: 'All stickers' })).toHaveAttribute('href', '/');
+	});
+
+	it('shows the price as money', async () => {
+		renderDetails();
+
+		expect(await screen.findByText('$89.00')).toBeInTheDocument();
+	});
+
+	it('does not show the internal popularity score', async () => {
+		renderDetails();
+
+		await screen.findByRole('heading', { name: testProduct.name });
+
+		expect(screen.queryByText(/popularity/i)).not.toBeInTheDocument();
+	});
 });

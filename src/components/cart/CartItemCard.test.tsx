@@ -21,11 +21,14 @@ const makeItem = (overrides: Partial<CartItem> = {}): CartItem => ({
 	...overrides,
 });
 
+// CartItemCard is a list row, so it is rendered inside the list it belongs to.
 const renderCard = (item: CartItem = makeItem()) =>
 	render(
 		<CartProvider>
 			<MemoryRouter>
-				<CartItemCard item={item} />
+				<ul>
+					<CartItemCard item={item} />
+				</ul>
 			</MemoryRouter>
 		</CartProvider>,
 	);
@@ -33,6 +36,12 @@ const renderCard = (item: CartItem = makeItem()) =>
 describe("CartItemCard", () => {
 	beforeEach(() => {
 		localStorage.clear();
+	});
+
+	it("is a list item", () => {
+		renderCard();
+
+		expect(screen.getByRole("listitem")).toBeInTheDocument();
 	});
 
 	it("renders the product image with alt text", () => {
@@ -45,6 +54,7 @@ describe("CartItemCard", () => {
 
 	it("renders the product name", () => {
 		renderCard();
+
 		expect(screen.getByRole("heading", { name: "Fake Product" })).toBeInTheDocument();
 	});
 
@@ -56,27 +66,28 @@ describe("CartItemCard", () => {
 		expect(link).toContainElement(screen.getByRole("img"));
 	});
 
-	it("renders the unit price and the line subtotal (price x quantity)", () => {
+	it("shows the unit price and the line subtotal (price x quantity)", () => {
 		renderCard(makeItem({ product: makeProduct({ price: 25 }), quantity: 3 }));
 
-		expect(screen.getByText("$25.00")).toBeInTheDocument();
+		expect(screen.getByTestId("line-breakdown")).toHaveTextContent("$25.00 each");
 		expect(screen.getByTestId("line-subtotal")).toHaveTextContent("$75.00");
 	});
 
-	it("makes the line total unambiguous: shows the quantity x unit breakdown and a labelled subtotal", () => {
-		renderCard(makeItem({ product: makeProduct({ price: 25 }), quantity: 3 }));
+	it("labels the subtotal", () => {
+		renderCard();
 
-		expect(screen.getByTestId("line-breakdown")).toHaveTextContent("3 × $25.00");
 		expect(screen.getByText("Subtotal")).toBeInTheDocument();
 	});
 
 	it("renders the stepper at the item's quantity", () => {
 		renderCard(makeItem({ quantity: 4 }));
+
 		expect(screen.getByTestId("quantity")).toHaveTextContent("4");
 	});
 
 	it("renders a Remove button for the product", () => {
 		renderCard();
+
 		expect(
 			screen.getByRole("button", { name: /remove fake product from cart/i }),
 		).toBeInTheDocument();
