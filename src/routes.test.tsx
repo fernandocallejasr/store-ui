@@ -216,7 +216,9 @@ describe("App routing", () => {
 	it("redirects /home to the index route", async () => {
 		renderAt("/home");
 
-		expect(await screen.findByText("My Page Heading")).toBeInTheDocument();
+		expect(
+			await screen.findByRole("heading", { name: /small stickers/i }),
+		).toBeInTheDocument();
 	});
 
 	it("renders the ProductDetails page at /products/:id", async () => {

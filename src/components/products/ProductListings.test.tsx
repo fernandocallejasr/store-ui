@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import type { Product } from "./types";
 import ProductListings from "./ProductListings";
@@ -29,13 +30,32 @@ const renderListings = (products: Product[]) =>
 		</MemoryRouter>
 	);
 
+// Fake timers make the 200ms search debounce deterministic.
+const user = () => userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+const passDebounce = () =>
+	act(() => {
+		vi.advanceTimersByTime(250);
+	});
+
+const typeSearch = async (text: string) => {
+	await user().type(screen.getByRole("searchbox"), text);
+	passDebounce();
+};
+
 describe('ProductListings Component', () => {
+	beforeEach(() => {
+		vi.useFakeTimers({ shouldAdvanceTime: true });
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
 	it('should render product cards for each product', () => {
 		renderListings(mockProducts);
 
-		const headings = screen.getAllByRole('heading', { level: 2 });
-
-		expect(headings).toHaveLength(2);
+		expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
 	});
 
 	it('should render each product name', () => {
@@ -45,15 +65,73 @@ describe('ProductListings Component', () => {
 		expect(screen.getByText("Sticker Beta")).toBeInTheDocument();
 	});
 
-	it('should render No products found when products array is empty', () => {
-		renderListings([]);
-
-		expect(screen.getByText("No products found")).toBeInTheDocument();
-	});
-
-	it('should not render No products found when products exist', () => {
+	it('heads the catalogue and counts it', () => {
 		renderListings(mockProducts);
 
-		expect(screen.queryByText("No products found")).not.toBeInTheDocument();
+		expect(screen.getByRole('heading', { level: 2, name: "All stickers" })).toBeInTheDocument();
+		expect(screen.getByText("2 stickers")).toBeInTheDocument();
+	});
+
+	it('uses the singular for a one-sticker catalogue', () => {
+		renderListings([mockProducts[0]]);
+
+		expect(screen.getByText("1 sticker")).toBeInTheDocument();
+	});
+
+	it('labels the sort options in sentence case', () => {
+		renderListings(mockProducts);
+
+		const labels = within(screen.getByLabelText("Sort by"))
+			.getAllByRole("option")
+			.map((option) => option.textContent);
+
+		expect(labels).toEqual(["Featured", "Most popular", "Price: low to high", "Price: high to low"]);
+	});
+
+	it('reports how many stickers match a search', async () => {
+		renderListings(mockProducts);
+
+		await typeSearch("alpha");
+
+		expect(screen.getByText('1 of 2 match "alpha"')).toBeInTheDocument();
+		expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1);
+	});
+
+	it('ignores whitespace around the search', async () => {
+		renderListings(mockProducts);
+
+		await typeSearch("  alpha  ");
+
+		expect(screen.getByText('1 of 2 match "alpha"')).toBeInTheDocument();
+	});
+
+	it('treats a whitespace-only search as no search', async () => {
+		renderListings(mockProducts);
+
+		await typeSearch("   ");
+
+		expect(screen.getByText("2 stickers")).toBeInTheDocument();
+		expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+	});
+
+	it('says when nothing matches and offers to clear the search', async () => {
+		renderListings(mockProducts);
+		await typeSearch("zzz");
+
+		expect(screen.getByText('No stickers match "zzz".')).toBeInTheDocument();
+
+		await user().click(screen.getByRole("button", { name: "Clear search" }));
+		passDebounce();
+
+		expect(screen.getByRole("searchbox")).toHaveValue("");
+		expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+	});
+
+	it('explains an empty catalogue without offering to clear a search', () => {
+		renderListings([]);
+
+		expect(screen.getByText("No stickers are available right now.")).toBeInTheDocument();
+		expect(screen.getByText("0 stickers")).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument();
 	});
 });

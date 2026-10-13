@@ -49,10 +49,9 @@ describe('Product Card', () => {
 	it('should render product title in heading element', () => {
 		renderCard();
 
-		const h2Element = screen.getByRole('heading', { level: 2 });
+		const heading = screen.getByRole('heading', { level: 3 });
 
-		expect(h2Element).toBeInTheDocument();
-		expect(h2Element).toHaveTextContent(testProduct.name);
+		expect(heading).toHaveTextContent(testProduct.name);
 	});
 
 	it('should render product description', () => {
