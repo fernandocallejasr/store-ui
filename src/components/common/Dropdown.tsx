@@ -1,3 +1,5 @@
+import { selectClass } from "./fieldStyles";
+
 export interface DropdownOption {
 	label: string;
 	value: string;
@@ -19,13 +21,13 @@ const Dropdown = ({
 	handleSelection,
 }: DropdownProps) => {
 	return (
-		<div className="flex items-center gap-2 font-primary">
-			<label htmlFor={id} className="text-lg font-semibold text-primary">
+		<div className="flex items-center gap-2">
+			<label htmlFor={id} className="shrink-0 text-sm font-medium text-slate-700 dark:text-slate-300">
 				{label}
 			</label>
 			<select
 				id={id}
-				className="px-3 py-2 text-base border rounded-md transition border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring"
+				className={`${selectClass} w-full sm:w-auto`}
 				value={selectedValue}
 				onChange={(e) => handleSelection(e.target.value)}
 			>

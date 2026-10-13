@@ -66,4 +66,15 @@ describe("useSearchFilter", () => {
 
 		expect(result.current).toHaveLength(0);
 	});
+
+	it("applies the query immediately when delayMs is 0, for callers that debounce themselves", () => {
+		const { result, rerender } = renderHook(
+			({ query }) => useSearchFilter(items, query, ["name", "description"], 0),
+			{ initialProps: { query: "" } },
+		);
+
+		rerender({ query: "alpha" });
+
+		expect(result.current).toHaveLength(1);
+	});
 });

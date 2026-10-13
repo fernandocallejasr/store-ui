@@ -11,8 +11,12 @@ export function useSearchFilter<T>(
 ): T[] {
 	const debouncedQuery = useDebouncedValue(query, delayMs);
 
+	// A delay of 0 means the caller has already debounced, so filter on the query
+	// as given; the result never trails what the caller is showing.
+	const activeQuery = delayMs === 0 ? query : debouncedQuery;
+
 	return useMemo(() => {
-		const normalized = debouncedQuery.trim().toLowerCase();
+		const normalized = activeQuery.trim().toLowerCase();
 		if (normalized === "") return items;
 
 		return items.filter((item) =>
@@ -21,5 +25,5 @@ export function useSearchFilter<T>(
 				return typeof value === "string" && value.toLowerCase().includes(normalized);
 			})
 		);
-	}, [items, debouncedQuery, fields]);
+	}, [items, activeQuery, fields]);
 }

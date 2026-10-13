@@ -36,7 +36,7 @@ describe('App Component', () => {
 	it('should render product listings', async () => {
 		render(<App />);
 
-		const productHeadings = await screen.findAllByRole('heading', { level: 2 });
+		const productHeadings = await screen.findAllByRole('heading', { level: 3 });
 
 		expect(productHeadings.length).toBeGreaterThan(0);
 	});
