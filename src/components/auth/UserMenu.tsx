@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/useAuth";
+import { focusRing } from "../common/buttonStyles";
 
 const menuItemClass =
-	"w-full flex items-center gap-2 px-4 py-2 text-left text-base font-primary text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary";
+	"flex min-h-11 w-full items-center gap-2 px-4 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:text-slate-300 dark:hover:bg-slate-800";
 
 const UserMenu = () => {
 	const { session, logOut } = useAuth();
@@ -54,12 +55,12 @@ const UserMenu = () => {
 				onClick={() => setOpen((isOpen) => !isOpen)}
 				aria-expanded={open}
 				aria-controls={panelId}
-				className="flex items-center gap-2 text-lg font-primary font-semibold text-primary py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
+				className={`flex items-center gap-2 rounded-sm text-sm font-medium text-slate-700 transition-colors hover:text-primary dark:text-slate-300 ${focusRing}`}
 			>
 				{session.user.name}
 				<FontAwesomeIcon
 					icon={faChevronDown}
-					className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
+					className={`h-3 w-3 motion-safe:transition-transform ${open ? "rotate-180" : ""}`}
 					aria-hidden="true"
 				/>
 			</button>
@@ -67,7 +68,7 @@ const UserMenu = () => {
 			{open && (
 				<div
 					id={panelId}
-					className="absolute right-0 mt-2 w-44 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-1 z-30"
+					className="absolute right-0 z-30 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-900"
 				>
 					<Link
 						to="/profile"

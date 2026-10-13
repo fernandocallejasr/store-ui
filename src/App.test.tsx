@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import App from './App';
 
 vi.mock("./repositories/productRepository", () => ({
@@ -12,7 +12,7 @@ describe('App Component', () => {
 	it('should render main title', () => {
 		render(<App />);
 
-		const mainTitle = screen.getByText(/Stickers Shop/i);
+		const mainTitle = within(screen.getByRole('banner')).getByText(/Stickers Shop/i);
 
 		expect(mainTitle).toBeInTheDocument();
 	});

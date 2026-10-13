@@ -65,3 +65,23 @@ describe("MainLayout pending UI", () => {
 		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 	});
 });
+
+describe("MainLayout skip link", () => {
+	it("offers a skip link that targets the main landmark", async () => {
+		await renderLayoutAndNavigate(() => "done");
+		await screen.findByText("Route content");
+
+		const target = screen.getByRole("link", { name: "Skip to content" }).getAttribute("href")!.slice(1);
+
+		expect(screen.getByRole("main")).toHaveAttribute("id", target);
+	});
+
+	it("puts the skip link before the header, so it is the first thing Tab reaches", async () => {
+		await renderLayoutAndNavigate(() => "done");
+
+		const skip = screen.getByRole("link", { name: "Skip to content" });
+		const banner = screen.getByRole("banner");
+
+		expect(skip.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+	});
+});

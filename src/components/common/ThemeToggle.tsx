@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "../../context/useTheme";
+import { focusRing } from "./buttonStyles";
 
 const ThemeToggle = () => {
 	const { theme, toggleTheme } = useTheme();
@@ -12,9 +13,9 @@ const ThemeToggle = () => {
 			onClick={toggleTheme}
 			aria-label="Toggle dark mode"
 			aria-pressed={isDark}
-			className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-primary text-primary transition-colors hover:bg-primary hover:text-on-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
+			className={`inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition-colors hover:bg-slate-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-900 ${focusRing}`}
 		>
-			<FontAwesomeIcon icon={isDark ? faSun : faMoon} />
+			<FontAwesomeIcon icon={isDark ? faSun : faMoon} aria-hidden="true" />
 		</button>
 	);
 };
