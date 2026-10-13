@@ -32,7 +32,7 @@ const Cart = () => {
 					</p>
 					<Link
 						to="/"
-						className="bg-primary text-white text-lg font-semibold py-3 px-8 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+						className="bg-primary text-on-primary text-lg font-semibold py-3 px-8 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 					>
 						Back to home
 					</Link>

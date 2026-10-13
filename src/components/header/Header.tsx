@@ -62,7 +62,7 @@ const Header = () => {
 								<FontAwesomeIcon icon={faShoppingBasket}/>
 								<span
 									aria-hidden="true"
-									className="absolute -top-1 -right-2 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-primary text-white text-xs font-semibold"
+									className="absolute -top-1 -right-2 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-primary text-on-primary text-xs font-semibold"
 								>
 									{badgeLabel}
 								</span>

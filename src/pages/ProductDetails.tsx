@@ -69,7 +69,7 @@ const ProductDetails = () => {
 						<button
 							type="button"
 							onClick={handleAddToCart}
-							className="bg-primary text-white font-semibold py-2 px-6 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+							className="bg-primary text-on-primary font-semibold py-2 px-6 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 						>
 							Add to cart
 						</button>
