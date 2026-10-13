@@ -145,7 +145,7 @@ describe("App routing", () => {
 			expect(
 				await screen.findByRole("heading", { name: /welcome back/i }),
 			).toBeInTheDocument();
-			expect(screen.getByRole("link", { name: "Login" })).toBeInTheDocument();
+			expect(screen.getByRole("link", { name: "Log in" })).toBeInTheDocument();
 			expect(screen.queryByRole("button", { name: /my user/i })).not.toBeInTheDocument();
 			expect(localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull();
 		},

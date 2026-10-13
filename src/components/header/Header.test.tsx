@@ -68,29 +68,35 @@ describe('Header Component', () => {
 		expect(navComponent).toBeInTheDocument();
 	});
 
-	it('should render Home, Contact, Login, Register links in navigation component', () => {
+	it('should render Shop, Contact, Log in, Register links in navigation component', () => {
 		renderHeader();
 
-		expect(screen.getByRole('link', {name: "Home"})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "Shop"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Contact"})).toBeInTheDocument();
-		expect(screen.getByRole('link', {name: "Login"})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: "Log in"})).toBeInTheDocument();
 		expect(screen.getByRole('link', {name: "Register"})).toBeInTheDocument();
 	});
 
 	it('should render each navigation link with the correct href', () => {
 		renderHeader();
 
-		expect(screen.getByRole('link', { name: "Home" })).toHaveAttribute('href', '/');
+		expect(screen.getByRole('link', { name: "Shop" })).toHaveAttribute('href', '/');
 		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
-		expect(screen.getByRole('link', { name: "Login" })).toHaveAttribute('href', '/login');
+		expect(screen.getByRole('link', { name: "Log in" })).toHaveAttribute('href', '/login');
 		expect(screen.getByRole('link', { name: "Register" })).toHaveAttribute('href', '/register');
 	});
 
+	it('offers a closed menu button for small screens', () => {
+		renderHeader();
+
+		expect(screen.getByRole('button', { name: "Menu" })).toHaveAttribute('aria-expanded', 'false');
+	});
+
 	describe('signed-in state', () => {
-		it('shows the Login link while anonymous, and no user menu', () => {
+		it('shows the Log in link while anonymous, and no user menu', () => {
 			renderHeader();
 
-			expect(screen.getByRole('link', { name: "Login" })).toBeInTheDocument();
+			expect(screen.getByRole('link', { name: "Log in" })).toBeInTheDocument();
 			expect(screen.queryByRole('button', { name: /my user/i })).not.toBeInTheDocument();
 		});
 
@@ -100,7 +106,7 @@ describe('Header Component', () => {
 			renderHeader();
 
 			expect(screen.getByRole('button', { name: /my user/i })).toBeInTheDocument();
-			expect(screen.queryByRole('link', { name: "Login" })).not.toBeInTheDocument();
+			expect(screen.queryByRole('link', { name: "Log in" })).not.toBeInTheDocument();
 		});
 
 		it('hides the Register link from someone who already has an account', () => {
@@ -126,14 +132,14 @@ describe('Header Component', () => {
 			expect(screen.getByRole('link', { name: "Profile" })).toHaveAttribute('href', '/profile');
 		});
 
-		it('logging out brings the Login link back', async () => {
+		it('logging out brings the Log in link back', async () => {
 			signIn();
 			renderHeader();
 
 			await userEvent.click(screen.getByRole('button', { name: /my user/i }));
 			await userEvent.click(screen.getByRole('button', { name: "Log out" }));
 
-			expect(screen.getByRole('link', { name: "Login" })).toBeInTheDocument();
+			expect(screen.getByRole('link', { name: "Log in" })).toBeInTheDocument();
 			expect(screen.queryByRole('button', { name: /my user/i })).not.toBeInTheDocument();
 		});
 	});

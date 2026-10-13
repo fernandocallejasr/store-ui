@@ -1,29 +1,40 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import Footer from "./Footer";
+
+const renderFooter = () =>
+	render(
+		<MemoryRouter>
+			<Footer />
+		</MemoryRouter>,
+	);
 
 describe('Footer Component', () => {
 	it('should render footer element', () => {
-		render(<Footer />);
+		renderFooter();
 
-		const footer = screen.getByRole('contentinfo');
-
-		expect(footer).toBeInTheDocument();
+		expect(screen.getByRole('contentinfo')).toBeInTheDocument();
 	});
 
 	it('should render Built with text', () => {
-		render(<Footer />);
+		renderFooter();
 
 		expect(screen.getByText(/built with/i)).toBeInTheDocument();
 	});
 
 	it('should render GitHub link with correct attributes', () => {
-		render(<Footer />);
+		renderFooter();
 
 		const githubLink = screen.getByRole('link', { name: /fernandocallejasr/i });
 
-		expect(githubLink).toBeInTheDocument();
 		expect(githubLink).toHaveAttribute('href', 'https://github.com/fernandocallejasr');
 		expect(githubLink).toHaveAttribute('target', '_blank');
 		expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer');
+	});
+
+	it('links to the contact page', () => {
+		renderFooter();
+
+		expect(screen.getByRole('link', { name: "Contact" })).toHaveAttribute('href', '/contact');
 	});
 });
