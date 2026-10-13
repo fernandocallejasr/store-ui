@@ -25,12 +25,6 @@
 @theme {
 	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
-
-	/* Transitional: kept until every component has been restyled (Task 7). */
-	--font-primary: var(--font-sans);
-	--color-dark: #4c1d95;
-	--color-lighter: #f5f3ff;
-	--color-light: #ddd6fe;
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import ErrorPage from "./pages/ErrorPage";
+import RootErrorPage from "./pages/RootErrorPage";
 import LoadingView from "./components/status/LoadingView";
 import { homeLoader } from "./components/home/homeLoader";
 import { productDetailsLoader } from "./pages/productDetailsLoader";
@@ -23,7 +24,7 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 
 export const routes = createRoutesFromElements(
-	<Route path="/" element={<MainLayout />} errorElement={<ErrorPage />}>
+	<Route path="/" element={<MainLayout />} errorElement={<RootErrorPage />}>
 		<Route
 			index
 			element={<Home />}

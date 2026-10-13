@@ -5,7 +5,12 @@ import {
 	useRevalidator,
 	useRouteError,
 } from "react-router-dom";
+import Container from "../components/common/Container";
+import Button from "../components/common/Button";
+import { buttonClasses } from "../components/common/buttonStyles";
 
+// Renders a <section>, not a <main>: it sits inside the layout's <main> when a
+// child route fails, and inside SiteShell's <main> at the root.
 const ErrorPage = () => {
 	const error = useRouteError();
 	const { revalidate, state } = useRevalidator();
@@ -21,25 +26,29 @@ const ErrorPage = () => {
 		: "An unexpected error occurred. Please try again later.";
 
 	return (
-		<main className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
-			<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-				{title}
-			</h1>
-			<p className="text-gray-600 dark:text-gray-400 mb-6">{message}</p>
-			{!isNotFound && (
-				<button
-					type="button"
-					onClick={() => revalidate()}
-					disabled={state === "loading"}
-					className="mb-4 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 font-primary font-semibold text-sm text-on-primary shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 dark:focus:ring-offset-gray-800"
-				>
-					{state === "loading" ? "Retrying…" : "Try again"}
-				</button>
-			)}
-			<Link to="/" className="text-primary hover:underline">
-				Go back home
-			</Link>
-		</main>
+		<Container className="py-16 sm:py-24">
+			<section aria-labelledby="error-title" className="max-w-xl">
+				{isNotFound && (
+					<p aria-hidden="true" className="font-mono text-6xl font-medium text-slate-500 dark:text-slate-400">
+						404
+					</p>
+				)}
+				<h1 id="error-title" className="mt-2 text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
+					{title}
+				</h1>
+				<p className="mt-4 text-pretty text-slate-600 dark:text-slate-400">{message}</p>
+				<div className="mt-8 flex flex-wrap items-center gap-6">
+					{!isNotFound && (
+						<Button onClick={() => revalidate()} disabled={state === "loading"}>
+							{state === "loading" ? "Retrying…" : "Try again"}
+						</Button>
+					)}
+					<Link to="/" className={buttonClasses({ variant: "text" })}>
+						Back to shop
+					</Link>
+				</div>
+			</section>
+		</Container>
 	);
 };
 
