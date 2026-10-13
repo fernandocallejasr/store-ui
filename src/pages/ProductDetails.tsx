@@ -54,7 +54,7 @@ const ProductDetails = () => {
 					</p>
 					<div className="flex items-center gap-4 mb-6">
 						<span className="bg-lighter dark:bg-gray-700 text-purple-700 dark:text-light font-medium text-lg py-2 px-4 rounded-md">
-							<ProductPrice currency="$" price={product.price} />
+							<ProductPrice price={product.price} />
 						</span>
 						<span className="text-sm text-gray-500 dark:text-gray-400">
 							Popularity: <span className="font-medium">{product.popularity}</span>

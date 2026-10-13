@@ -1,25 +1,34 @@
 import { render, screen } from "@testing-library/react";
 import ProductPrice from "./ProductPrice";
 
-describe('ProductPrice Component', () => {
-	it('should render currency symbol and price', () => {
-		render(<ProductPrice currency="$" price={9.99} />);
+describe("ProductPrice", () => {
+	it("shows whole amounts with two decimals", () => {
+		render(<ProductPrice price={6} />);
 
-		expect(screen.getByText("9.99")).toBeInTheDocument();
+		expect(screen.getByText("$6.00")).toBeInTheDocument();
 	});
 
-	it('should render price value inside a span element', () => {
-		render(<ProductPrice currency="$" price={9.99} />);
+	it("pads a single decimal", () => {
+		render(<ProductPrice price={4.5} />);
 
-		const priceElement = screen.getByText("9.99");
-
-		expect(priceElement.tagName).toBe("SPAN");
+		expect(screen.getByText("$4.50")).toBeInTheDocument();
 	});
 
-	it('should render with different currency symbols', () => {
-		render(<ProductPrice currency="EUR" price={15} />);
+	it("rounds floating-point noise to the cent", () => {
+		render(<ProductPrice price={0.1 + 0.2} />);
 
-		expect(screen.getByText(/EUR/)).toBeInTheDocument();
-		expect(screen.getByText("15")).toBeInTheDocument();
+		expect(screen.getByText("$0.30")).toBeInTheDocument();
+	});
+
+	it("groups thousands", () => {
+		render(<ProductPrice price={1234.5} />);
+
+		expect(screen.getByText("$1,234.50")).toBeInTheDocument();
+	});
+
+	it("renders a single span so it can sit inside running text", () => {
+		render(<ProductPrice price={9.99} />);
+
+		expect(screen.getByText("$9.99").tagName).toBe("SPAN");
 	});
 });

@@ -1,16 +1,14 @@
+const priceFormatter = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "USD",
+});
 
 interface ProductPriceProps {
-	currency: string;
 	price: number;
 };
 
-const ProductPrice = ({ currency, price }: ProductPriceProps) => {
-	return (
-		<>
-			{currency}
-			<span>{price}</span>
-		</>
-	);
-};
+const ProductPrice = ({ price }: ProductPriceProps) => (
+	<span className="font-mono tabular-nums">{priceFormatter.format(price)}</span>
+);
 
 export default ProductPrice;

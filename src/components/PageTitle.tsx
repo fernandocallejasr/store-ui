@@ -2,12 +2,10 @@ interface PageTitleProps {
 	title: string;
 };
 
-const PageTitle = ( { title }: PageTitleProps ) => {
-	return (
-		<div className="text-3xl font-primary font-extrabold text-center text-primary mt-4 py-2">
-			{ title }
-		</div>
-	);
-};
+const PageTitle = ({ title }: PageTitleProps) => (
+	<h1 className="text-3xl font-semibold tracking-tight text-balance text-primary sm:text-4xl">
+		{title}
+	</h1>
+);
 
 export default PageTitle;
