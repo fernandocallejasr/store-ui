@@ -251,4 +251,23 @@ describe("App routing", () => {
 			await screen.findByRole("heading", { name: /page not found/i }),
 		).toBeInTheDocument();
 	});
+
+	it("gives an unknown route the site header and footer", async () => {
+		renderAt("/totally-not-a-route");
+
+		expect(
+			await screen.findByRole("heading", { name: /page not found/i }),
+		).toBeInTheDocument();
+		expect(screen.getByRole("banner")).toBeInTheDocument();
+		expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+		expect(screen.getAllByRole("main")).toHaveLength(1);
+	});
+
+	it("keeps a single main landmark when a page fails inside the layout", async () => {
+		renderAt("/products/abc");
+
+		await screen.findByRole("heading", { name: /page not found/i });
+
+		expect(screen.getAllByRole("main")).toHaveLength(1);
+	});
 });

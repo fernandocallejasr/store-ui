@@ -43,12 +43,28 @@ describe("ErrorPage", () => {
 		expect(screen.queryByText(/kaboom/)).not.toBeInTheDocument();
 	});
 
-	it("provides a link back to home", async () => {
+	it("provides a link back to the shop", async () => {
 		renderWithLoaderThrow(new Error("kaboom"));
 
 		expect(
-			await screen.findByRole("link", { name: /go back home/i }),
+			await screen.findByRole("link", { name: "Back to shop" }),
 		).toHaveAttribute("href", "/");
+	});
+
+	it("shows the 404 code for a missing page", async () => {
+		renderWithLoaderThrow(new Response("Not Found", { status: 404 }));
+
+		await screen.findByRole("heading", { name: "Page not found" });
+
+		expect(screen.getByText("404")).toBeInTheDocument();
+	});
+
+	it("does not show a 404 code for other errors", async () => {
+		renderWithLoaderThrow(new Error("kaboom"));
+
+		await screen.findByRole("heading", { name: "Something went wrong" });
+
+		expect(screen.queryByText("404")).not.toBeInTheDocument();
 	});
 
 	it("re-runs the route loader when the retry button is clicked", async () => {
