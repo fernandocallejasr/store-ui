@@ -86,11 +86,11 @@ describe("App routing", () => {
 		expect(screen.getByRole("contentinfo")).toBeInTheDocument();
 	});
 
-	it("renders the About page at /about", async () => {
+	it("renders the ErrorPage at /about, which no longer exists", async () => {
 		renderAt("/about");
 
 		expect(
-			await screen.findByText("About", { selector: "div" }),
+			await screen.findByRole("heading", { name: /page not found/i }),
 		).toBeInTheDocument();
 	});
 
