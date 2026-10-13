@@ -1,4 +1,6 @@
 import { useLoaderData } from "react-router-dom";
+import PageHeading from "../components/PageHeading";
+import Container from "../components/common/Container";
 import type { profileLoader } from "./profileLoader";
 
 const Profile = () => {
@@ -12,22 +14,22 @@ const Profile = () => {
 	];
 
 	return (
-		<div className="max-w-3xl w-full mx-auto px-6 py-8 font-primary">
-			<h1 className="text-3xl font-semibold text-primary mb-6">Your Profile</h1>
+		<Container className="pb-16">
+			<PageHeading title="Your profile" />
 
-			<dl className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-md divide-y divide-gray-300 dark:divide-gray-700">
+			<dl className="max-w-3xl divide-y divide-slate-200 rounded-xl bg-white dark:divide-slate-800 dark:bg-slate-900">
 				{fields.map(({ label, value }) => (
 					<div key={label} className="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-						<dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+						<dt className="text-sm font-medium text-slate-600 dark:text-slate-400">
 							{label}
 						</dt>
-						<dd className="mt-1 sm:mt-0 sm:col-span-2 text-base text-gray-900 dark:text-gray-100 wrap-break-word">
+						<dd className="mt-1 wrap-break-word text-slate-900 sm:col-span-2 sm:mt-0 dark:text-slate-100">
 							{value}
 						</dd>
 					</div>
 				))}
 			</dl>
-		</div>
+		</Container>
 	);
 };
 

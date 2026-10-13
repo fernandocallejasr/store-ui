@@ -29,12 +29,12 @@ describe("Profile page", () => {
 	it("shows the heading", async () => {
 		renderProfile();
 
-		expect(await screen.findByRole("heading", { name: "Your Profile" })).toBeInTheDocument();
+		expect(await screen.findByRole("heading", { name: "Your profile" })).toBeInTheDocument();
 	});
 
 	it("shows each field of the loaded profile against its label", async () => {
 		renderProfile();
-		await screen.findByRole("heading", { name: "Your Profile" });
+		await screen.findByRole("heading", { name: "Your profile" });
 
 		expect(fieldsShown()).toEqual({
 			"Name": "My User",
@@ -46,7 +46,7 @@ describe("Profile page", () => {
 
 	it("is read-only", async () => {
 		renderProfile();
-		await screen.findByRole("heading", { name: "Your Profile" });
+		await screen.findByRole("heading", { name: "Your profile" });
 
 		expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
 		expect(screen.queryByRole("button")).not.toBeInTheDocument();
