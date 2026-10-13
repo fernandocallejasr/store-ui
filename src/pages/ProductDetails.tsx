@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link, useLoaderData } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faCheck } from "@fortawesome/free-solid-svg-icons";
 import ProductPrice from "../components/products/ProductPrice";
 import QuantityStepper from "../components/products/QuantityStepper";
+import Container from "../components/common/Container";
+import Button from "../components/common/Button";
+import { buttonClasses, inlineLinkClass } from "../components/common/buttonStyles";
 import { useCart } from "../context/useCart";
 import type { productDetailsLoader } from "./productDetailsLoader";
 
@@ -30,64 +35,51 @@ const ProductDetails = () => {
 	};
 
 	return (
-		<div className="max-w-5xl mx-auto px-6 py-8 font-primary">
-			<Link
-				to="/"
-				className="inline-flex items-center text-sm text-primary hover:underline mb-6"
-			>
-				← Back to products
+		<Container className="py-8 sm:py-12">
+			<Link to="/" className={`mb-8 ${buttonClasses({ variant: "text" })}`}>
+				<FontAwesomeIcon icon={faArrowLeft} aria-hidden="true" />
+				All stickers
 			</Link>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-md overflow-hidden">
-				<div className="relative w-full h-96 md:h-full bg-gray-100 dark:bg-gray-900">
+			<div className="grid gap-10 md:grid-cols-2 md:gap-12">
+				<div className="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-900 dark:ring-white/10">
 					<img
 						src={product.imageUrl}
 						alt={product.name}
-						className="w-full h-full object-cover"
+						className="aspect-[10/11] w-full object-cover"
 					/>
 				</div>
-				<div className="p-8 flex flex-col">
-					<h1 className="text-3xl font-semibold text-primary mb-4">
+				<div className="md:sticky md:top-24 md:self-start">
+					<h1 className="text-3xl font-semibold tracking-tight text-balance text-slate-900 sm:text-4xl dark:text-slate-100">
 						{product.name}
 					</h1>
-					<p className="text-base text-gray-600 dark:text-gray-400 mb-6">
+					<p className="mt-4 text-2xl text-primary">
+						<ProductPrice price={product.price} />
+					</p>
+					<p className="mt-6 max-w-[65ch] text-pretty text-slate-600 dark:text-slate-400">
 						{product.description}
 					</p>
-					<div className="flex items-center gap-4 mb-6">
-						<span className="bg-lighter dark:bg-gray-700 text-purple-700 dark:text-light font-medium text-lg py-2 px-4 rounded-md">
-							<ProductPrice price={product.price} />
-						</span>
-						<span className="text-sm text-gray-500 dark:text-gray-400">
-							Popularity: <span className="font-medium">{product.popularity}</span>
-						</span>
-					</div>
-					<div className="flex items-center gap-4 mt-auto">
+					<div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
 						<QuantityStepper
 							value={quantity}
 							onIncrement={increment}
 							onDecrement={decrement}
 						/>
-						<button
-							type="button"
-							onClick={handleAddToCart}
-							className="bg-primary text-on-primary font-semibold py-2 px-6 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-						>
+						<Button size="lg" onClick={handleAddToCart} className="w-full sm:w-auto">
 							Add to cart
-						</button>
+						</Button>
 					</div>
 					{justAdded && (
-						<p role="status" className="mt-3 text-sm text-green-700 dark:text-green-400">
-							Added to cart ✓{" "}
-							<Link
-								to="/cart"
-								className="font-medium underline hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
-							>
+						<p role="status" className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+							<FontAwesomeIcon icon={faCheck} className="text-primary" aria-hidden="true" />
+							Added to cart.
+							<Link to="/cart" className={inlineLinkClass}>
 								View cart
 							</Link>
 						</p>
 					)}
 				</div>
 			</div>
-		</div>
+		</Container>
 	);
 };
 
