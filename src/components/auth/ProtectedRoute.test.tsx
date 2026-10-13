@@ -15,7 +15,7 @@ const renderAt = (path: string) => {
 		[
 			{
 				element: <ProtectedRoute />,
-				children: [{ path: "/cart", element: <h1>Cart contents</h1> }],
+				children: [{ path: "/profile", element: <h1>Profile contents</h1> }],
 			},
 			{ path: "/login", element: <h1>Login page</h1> },
 		],
@@ -36,34 +36,34 @@ describe("ProtectedRoute", () => {
 	});
 
 	it("sends an anonymous visitor to the login page", async () => {
-		renderAt("/cart");
+		renderAt("/profile");
 
 		expect(await screen.findByRole("heading", { name: "Login page" })).toBeInTheDocument();
-		expect(screen.queryByText("Cart contents")).not.toBeInTheDocument();
+		expect(screen.queryByText("Profile contents")).not.toBeInTheDocument();
 	});
 
 	it("renders the guarded route for a signed-in visitor", async () => {
 		signIn();
 
-		renderAt("/cart");
+		renderAt("/profile");
 
-		expect(await screen.findByRole("heading", { name: "Cart contents" })).toBeInTheDocument();
+		expect(await screen.findByRole("heading", { name: "Profile contents" })).toBeInTheDocument();
 		expect(screen.queryByText("Login page")).not.toBeInTheDocument();
 	});
 
 	it("remembers where an anonymous visitor was trying to go", async () => {
-		renderAt("/cart");
+		renderAt("/profile");
 
 		await screen.findByRole("heading", { name: "Login page" });
-		expect(sessionStorage.getItem(REDIRECT_PATH_STORAGE_KEY)).toBe("/cart");
+		expect(sessionStorage.getItem(REDIRECT_PATH_STORAGE_KEY)).toBe("/profile");
 	});
 
 	it("records nothing when the visitor is already signed in", async () => {
 		signIn();
 
-		renderAt("/cart");
+		renderAt("/profile");
 
-		await screen.findByRole("heading", { name: "Cart contents" });
+		await screen.findByRole("heading", { name: "Profile contents" });
 		expect(sessionStorage.getItem(REDIRECT_PATH_STORAGE_KEY)).toBeNull();
 	});
 });
