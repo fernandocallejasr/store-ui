@@ -2,10 +2,39 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* The accent flips with the theme. White text fails on the lighter dark-mode
+   accent, so text on an accent background always uses on-primary. */
+:root {
+	--primary: #a8502f;
+	--primary-hover: #8f4227;
+	--on-primary: #ffffff;
+}
+
+.dark {
+	--primary: #e8906f;
+	--primary-hover: #f0a585;
+	--on-primary: #020617;
+}
+
+@theme inline {
+	--color-primary: var(--primary);
+	--color-primary-hover: var(--primary-hover);
+	--color-on-primary: var(--on-primary);
+}
+
 @theme {
-	--font-primary: "Roboto";
-	--color-primary: #c76f51;
+	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+	/* Transitional: kept until every component has been restyled (Task 7). */
+	--font-primary: var(--font-sans);
 	--color-dark: #4c1d95;
 	--color-lighter: #f5f3ff;
 	--color-light: #ddd6fe;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
 }

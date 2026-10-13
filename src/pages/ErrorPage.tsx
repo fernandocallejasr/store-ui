@@ -31,7 +31,7 @@ const ErrorPage = () => {
 					type="button"
 					onClick={() => revalidate()}
 					disabled={state === "loading"}
-					className="mb-4 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 font-primary font-semibold text-sm text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 dark:focus:ring-offset-gray-800"
+					className="mb-4 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 font-primary font-semibold text-sm text-on-primary shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 dark:focus:ring-offset-gray-800"
 				>
 					{state === "loading" ? "Retrying…" : "Try again"}
 				</button>

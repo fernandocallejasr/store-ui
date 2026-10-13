@@ -39,7 +39,7 @@ const ProductCard = ({
 					type="button"
 					onClick={() => addToCart(product)}
 					aria-label={`Add ${product.name} to cart`}
-					className="bg-primary text-white font-semibold text-sm py-2 px-4 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+					className="bg-primary text-on-primary font-semibold text-sm py-2 px-4 rounded-md hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 				>
 					Add to cart
 				</button>
