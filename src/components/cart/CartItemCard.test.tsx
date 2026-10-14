@@ -69,8 +69,8 @@ describe("CartItemCard", () => {
 	it("shows the unit price and the line subtotal (price x quantity)", () => {
 		renderCard(makeItem({ product: makeProduct({ price: 25 }), quantity: 3 }));
 
-		expect(screen.getByTestId("line-breakdown")).toHaveTextContent("$25.00 each");
-		expect(screen.getByTestId("line-subtotal")).toHaveTextContent("$75.00");
+		expect(screen.getByTestId("line-breakdown")).toHaveTextContent(/^\$25\.00 each$/);
+		expect(screen.getByTestId("line-subtotal")).toHaveTextContent(/^\$75\.00$/);
 	});
 
 	it("labels the subtotal", () => {

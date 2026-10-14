@@ -72,7 +72,7 @@ describe("Cart page", () => {
 		expect(screen.getByRole("heading", { name: "A" })).toBeInTheDocument();
 		expect(screen.getByRole("heading", { name: "B" })).toBeInTheDocument();
 		// 10*2 + 20*3 = 80
-		expect(screen.getByTestId("cart-total-price")).toHaveTextContent("$80.00");
+		expect(screen.getByTestId("cart-total-price")).toHaveTextContent(/^\$80\.00$/);
 	});
 
 	it("adds up prices to the cent", () => {
@@ -83,7 +83,7 @@ describe("Cart page", () => {
 
 		renderCart();
 
-		expect(screen.getByTestId("cart-total-price")).toHaveTextContent("$0.30");
+		expect(screen.getByTestId("cart-total-price")).toHaveTextContent(/^\$0\.30$/);
 	});
 
 	it("increasing an item's quantity updates the order total", async () => {
@@ -91,11 +91,11 @@ describe("Cart page", () => {
 
 		renderCart();
 
-		expect(screen.getByTestId("cart-total-price")).toHaveTextContent("$10.00");
+		expect(screen.getByTestId("cart-total-price")).toHaveTextContent(/^\$10\.00$/);
 
 		await userEvent.click(screen.getByRole("button", { name: /increase quantity/i }));
 
-		expect(screen.getByTestId("cart-total-price")).toHaveTextContent("$20.00");
+		expect(screen.getByTestId("cart-total-price")).toHaveTextContent(/^\$20\.00$/);
 	});
 
 	it("removing a product drops it from the cart and updates the total", async () => {
@@ -110,7 +110,7 @@ describe("Cart page", () => {
 
 		expect(screen.queryByRole("heading", { name: "A" })).not.toBeInTheDocument();
 		expect(screen.getByRole("heading", { name: "B" })).toBeInTheDocument();
-		expect(screen.getByTestId("cart-total-price")).toHaveTextContent("$20.00");
+		expect(screen.getByTestId("cart-total-price")).toHaveTextContent(/^\$20\.00$/);
 	});
 
 	it("offers Continue shopping when there are items", () => {

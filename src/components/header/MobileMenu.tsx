@@ -79,7 +79,7 @@ const MobileMenu = () => {
 			{open && (
 				<div
 					id={panelId}
-					className="absolute inset-x-0 top-full border-b border-slate-200 bg-slate-50 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-950"
+					className="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-b border-slate-200 bg-slate-50 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-950"
 				>
 					<Container className="flex flex-col gap-4 py-4">
 						<nav aria-label="Mobile">

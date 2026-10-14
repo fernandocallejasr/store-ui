@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Product } from "./types";
 import ProductCard from "./ProductCard";
 import Dropdown, { type DropdownOption } from "../common/Dropdown";
@@ -31,6 +31,12 @@ const ProductListings = ({
 }: ProductListingsProps) => {
 	const [sortOption, setSortOption] = useState<string>("");
 	const [query, setQuery] = useState<string>("");
+	const searchRef = useRef<HTMLInputElement>(null);
+
+	const clearSearch = () => {
+		setQuery("");
+		searchRef.current?.focus();
+	};
 
 	// Debounced once, here, so the grid and the result count always describe
 	// the same search.
@@ -45,7 +51,7 @@ const ProductListings = ({
 	return (
 		<section id="stickers" aria-labelledby="stickers-title" className="scroll-mt-24 pb-20">
 			<Container>
-				<div className="flex flex-col gap-4 border-t border-slate-200 pt-10 sm:flex-row sm:items-end sm:justify-between dark:border-slate-800">
+				<div className="flex flex-col gap-4 border-t border-slate-200 pt-10 lg:flex-row lg:items-end lg:justify-between dark:border-slate-800">
 					<div className="min-w-0">
 						<h2
 							id="stickers-title"
@@ -58,12 +64,15 @@ const ProductListings = ({
 						</p>
 					</div>
 					<div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-						<SearchBox
-							value={query}
-							onChange={setQuery}
-							placeholder="Search stickers…"
-							ariaLabel="Search stickers"
-						/>
+						<div className="w-full sm:min-w-0 sm:flex-1 lg:w-72 lg:flex-none">
+							<SearchBox
+								ref={searchRef}
+								value={query}
+								onChange={setQuery}
+								placeholder="Search stickers…"
+								ariaLabel="Search stickers"
+							/>
+						</div>
 						<Dropdown
 							id="product-sort"
 							label="Sort by"
@@ -91,7 +100,7 @@ const ProductListings = ({
 						<p className="break-words text-slate-900 dark:text-slate-100">
 							No stickers match "{searchTerm}".
 						</p>
-						<Button variant="text" onClick={() => setQuery("")}>
+						<Button variant="text" onClick={clearSearch}>
 							Clear search
 						</Button>
 					</div>
