@@ -13,7 +13,7 @@ const ThemeToggle = () => {
 			onClick={toggleTheme}
 			aria-label="Toggle dark mode"
 			aria-pressed={isDark}
-			className={`inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition-colors hover:bg-slate-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-900 ${focusRing}`}
+			className={`inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition-colors hover:bg-slate-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700 ${focusRing}`}
 		>
 			<FontAwesomeIcon icon={isDark ? faSun : faMoon} aria-hidden="true" />
 		</button>

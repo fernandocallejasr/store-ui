@@ -9,7 +9,7 @@ interface ButtonStyleOptions {
 // One keyboard-focus treatment for every interactive element. The offset takes
 // the page colour in each theme, so the gap never shows up as a white ring.
 export const focusRing =
-	"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-slate-950";
+	"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-slate-800";
 
 const base =
 	"inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-[color,background-color,border-color,transform] duration-200 motion-safe:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";

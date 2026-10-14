@@ -23,7 +23,7 @@ const ProductCard = ({
 				aria-label={`View details for ${product.name}`}
 				className={`block rounded-xl ${focusRing}`}
 			>
-				<div className="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-900 dark:ring-white/10">
+				<div className="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-700 dark:ring-white/10">
 					<img
 						src={product.imageUrl}
 						alt={product.name}
@@ -32,7 +32,7 @@ const ProductCard = ({
 						className="aspect-[10/11] w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.03]"
 					/>
 				</div>
-				<h3 className="mt-3 truncate font-medium text-slate-900 dark:text-slate-100">
+				<h3 className="mt-3 truncate font-medium text-slate-900 dark:text-slate-200">
 					{product.name}
 				</h3>
 				<p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">
