@@ -22,7 +22,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
 			<Link
 				to={`/products/${product.productId}`}
 				aria-label={`View details for ${product.name}`}
-				className={`block w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-900 dark:ring-white/10 ${focusRing}`}
+				className={`block w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-700 dark:ring-white/10 ${focusRing}`}
 			>
 				<img
 					src={product.imageUrl}
@@ -32,7 +32,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
 			</Link>
 			<div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div className="min-w-0">
-					<h2 className="truncate font-medium text-slate-900 dark:text-slate-100">
+					<h2 className="truncate font-medium text-slate-900 dark:text-slate-200">
 						{product.name}
 					</h2>
 					<p data-testid="line-breakdown" className="mt-1 text-sm text-slate-600 dark:text-slate-400">
@@ -42,7 +42,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
 						type="button"
 						onClick={() => removeFromCart(product.productId)}
 						aria-label={`Remove ${product.name} from cart`}
-						className={`mt-3 inline-flex items-center gap-2 rounded-sm text-sm text-slate-600 transition-colors hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100 ${focusRing}`}
+						className={`mt-3 inline-flex items-center gap-2 rounded-sm text-sm text-slate-600 transition-colors hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-200 ${focusRing}`}
 					>
 						<FontAwesomeIcon icon={faTrashCan} aria-hidden="true" />
 						Remove
@@ -57,7 +57,7 @@ const CartItemCard = ({ item }: CartItemCardProps) => {
 					/>
 					<p className="text-right">
 						<span className="block text-xs text-slate-600 dark:text-slate-400">Subtotal</span>
-						<span data-testid="line-subtotal" className="font-medium text-slate-900 dark:text-slate-100">
+						<span data-testid="line-subtotal" className="font-medium text-slate-900 dark:text-slate-200">
 							<ProductPrice price={subtotal} />
 						</span>
 					</p>

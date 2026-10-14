@@ -26,7 +26,7 @@ const HomeHero = ({ products }: HomeHeroProps) => {
 				<div>
 					<h1
 						id="home-hero-title"
-						className="text-4xl font-semibold tracking-tight text-balance text-slate-900 sm:text-5xl lg:text-6xl dark:text-slate-100"
+						className="text-4xl font-semibold tracking-tight text-balance text-slate-900 sm:text-5xl lg:text-6xl dark:text-slate-200"
 					>
 						Small stickers. <span className="text-primary">Strong opinions.</span>
 					</h1>

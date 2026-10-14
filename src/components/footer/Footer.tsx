@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import Container from "../common/Container";
 import { focusRing } from "../common/buttonStyles";
 
-const footerLinkClass = `rounded-sm font-medium text-slate-900 transition-colors hover:text-primary dark:text-slate-100 ${focusRing}`;
+const footerLinkClass = `rounded-sm font-medium text-slate-900 transition-colors hover:text-primary dark:text-slate-200 ${focusRing}`;
 
 const Footer = () => {
 	return (
-		<footer className="border-t border-slate-200 dark:border-slate-800">
+		<footer className="border-t border-slate-200 dark:border-slate-700">
 			<Container className="flex flex-col gap-2 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between dark:text-slate-400">
 				<p>© Stickers Shop</p>
 				<div className="flex flex-wrap items-center gap-x-6 gap-y-2">

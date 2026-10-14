@@ -6,7 +6,7 @@ import { useAuth } from "../../context/useAuth";
 import { focusRing } from "../common/buttonStyles";
 
 const menuItemClass =
-	"flex min-h-11 w-full items-center gap-2 px-4 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:text-slate-300 dark:hover:bg-slate-800";
+	"flex min-h-11 w-full items-center gap-2 px-4 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:text-slate-300 dark:hover:bg-slate-600";
 
 const UserMenu = () => {
 	const { session, logOut } = useAuth();
@@ -68,7 +68,7 @@ const UserMenu = () => {
 			{open && (
 				<div
 					id={panelId}
-					className="absolute right-0 z-30 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-900"
+					className="absolute right-0 z-30 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-900/10 dark:border-slate-600 dark:bg-slate-700"
 				>
 					<Link
 						to="/profile"

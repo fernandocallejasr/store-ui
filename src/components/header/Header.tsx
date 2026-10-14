@@ -26,11 +26,11 @@ const Header = () => {
 	const badgeLabel = totalQuantity > 99 ? "99+" : String(totalQuantity);
 
 	return (
-		<header className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+		<header className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
 			<Container className="flex h-16 items-center justify-between gap-4">
 				<Link to="/" className={`flex items-center gap-2 rounded-sm ${focusRing}`}>
 					<FontAwesomeIcon icon={faStore} className="h-6 w-6 text-primary" aria-hidden="true" />
-					<span className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+					<span className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-200">
 						Stickers Shop
 					</span>
 				</Link>

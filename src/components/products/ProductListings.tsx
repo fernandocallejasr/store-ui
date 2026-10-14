@@ -51,11 +51,11 @@ const ProductListings = ({
 	return (
 		<section id="stickers" aria-labelledby="stickers-title" className="scroll-mt-24 pb-20">
 			<Container>
-				<div className="flex flex-col gap-4 border-t border-slate-200 pt-10 lg:flex-row lg:items-end lg:justify-between dark:border-slate-800">
+				<div className="flex flex-col gap-4 border-t border-slate-200 pt-10 lg:flex-row lg:items-end lg:justify-between dark:border-slate-700">
 					<div className="min-w-0">
 						<h2
 							id="stickers-title"
-							className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100"
+							className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-200"
 						>
 							All stickers
 						</h2>
@@ -97,7 +97,7 @@ const ProductListings = ({
 					</p>
 				) : (
 					<div className="mt-10 flex flex-col items-start gap-3">
-						<p className="break-words text-slate-900 dark:text-slate-100">
+						<p className="break-words text-slate-900 dark:text-slate-200">
 							No stickers match "{searchTerm}".
 						</p>
 						<Button variant="text" onClick={clearSearch}>

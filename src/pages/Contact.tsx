@@ -37,27 +37,27 @@ const Contact = () => {
 				</p>
 			</PageHeading>
 
-			<ul className="max-w-xl divide-y divide-slate-200 overflow-hidden rounded-xl bg-white dark:divide-slate-800 dark:bg-slate-900">
+			<ul className="max-w-xl divide-y divide-slate-200 overflow-hidden rounded-xl bg-white dark:divide-slate-600 dark:bg-slate-700">
 				{contactLinks.map(({ label, handle, href, icon }) => (
 					<li key={label}>
 						<a
 							href={href}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-4 px-6 py-5 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:hover:bg-slate-800"
+							className="flex items-center gap-4 px-6 py-5 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary dark:hover:bg-slate-600"
 						>
 							<FontAwesomeIcon
 								icon={icon}
-								className="h-6 w-6 text-slate-900 dark:text-slate-100"
+								className="h-6 w-6 text-slate-900 dark:text-slate-200"
 								aria-hidden="true"
 							/>
 							<span className="min-w-0 flex-1">
-								<span className="block font-medium text-slate-900 dark:text-slate-100">{label}</span>
-								<span className="block truncate text-sm text-slate-600 dark:text-slate-400">{handle}</span>
+								<span className="block font-medium text-slate-900 dark:text-slate-200">{label}</span>
+								<span className="block truncate text-sm text-slate-600 dark:text-slate-300">{handle}</span>
 							</span>
 							<FontAwesomeIcon
 								icon={faArrowUpRightFromSquare}
-								className="h-4 w-4 text-slate-500 dark:text-slate-400"
+								className="h-4 w-4 text-slate-500 dark:text-slate-300"
 								aria-hidden="true"
 							/>
 							<span className="sr-only">(opens in new tab)</span>

@@ -41,7 +41,7 @@ const ProductDetails = () => {
 				All stickers
 			</Link>
 			<div className="grid gap-10 md:grid-cols-2 md:gap-12">
-				<div className="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-900 dark:ring-white/10">
+				<div className="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 dark:bg-slate-700 dark:ring-white/10">
 					<img
 						src={product.imageUrl}
 						alt={product.name}
@@ -49,7 +49,7 @@ const ProductDetails = () => {
 					/>
 				</div>
 				<div className="md:sticky md:top-24 md:self-start">
-					<h1 className="text-3xl font-semibold tracking-tight text-balance text-slate-900 sm:text-4xl dark:text-slate-100">
+					<h1 className="text-3xl font-semibold tracking-tight text-balance text-slate-900 sm:text-4xl dark:text-slate-200">
 						{product.name}
 					</h1>
 					<p className="mt-4 text-2xl text-primary">

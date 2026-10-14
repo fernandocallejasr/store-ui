@@ -17,13 +17,13 @@ const Profile = () => {
 		<Container className="pb-16">
 			<PageHeading title="Your profile" />
 
-			<dl className="max-w-3xl divide-y divide-slate-200 rounded-xl bg-white dark:divide-slate-800 dark:bg-slate-900">
+			<dl className="max-w-3xl divide-y divide-slate-200 rounded-xl bg-white dark:divide-slate-600 dark:bg-slate-700">
 				{fields.map(({ label, value }) => (
 					<div key={label} className="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-						<dt className="text-sm font-medium text-slate-600 dark:text-slate-400">
+						<dt className="text-sm font-medium text-slate-600 dark:text-slate-300">
 							{label}
 						</dt>
-						<dd className="mt-1 wrap-break-word text-slate-900 sm:col-span-2 sm:mt-0 dark:text-slate-100">
+						<dd className="mt-1 wrap-break-word text-slate-900 sm:col-span-2 sm:mt-0 dark:text-slate-200">
 							{value}
 						</dd>
 					</div>
