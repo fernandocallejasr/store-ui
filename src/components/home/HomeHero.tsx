@@ -5,6 +5,8 @@ import { buttonClasses } from "../common/buttonStyles";
 import { summarizeCatalog } from "./catalogSummary";
 
 // Where each featured sticker sits in the pile, most popular first and on top.
+// The pile's wrapper is `isolate`, so these z-indexes stay inside it instead of
+// competing with the sticky header (z-20) and drawing over it.
 const PILE = [
 	"left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 rotate-2",
 	"left-0 top-0 z-20 -rotate-4",
@@ -44,7 +46,7 @@ const HomeHero = ({ products }: HomeHeroProps) => {
 				{featured.length > 0 && (
 					<div
 						aria-hidden="true"
-						className="relative mx-auto aspect-square w-full max-w-xs sm:max-w-sm md:max-w-md"
+						className="relative isolate mx-auto aspect-square w-full max-w-xs sm:max-w-sm md:max-w-md"
 					>
 						{featured.map((product, index) => (
 							<img

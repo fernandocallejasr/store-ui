@@ -93,7 +93,10 @@ describe('ProductListings Component', () => {
 
 		await typeSearch("alpha");
 
-		expect(screen.getByText('1 of 2 match "alpha"')).toBeInTheDocument();
+		const count = screen.getByText('1 of 2 match "alpha"');
+		// Announced politely, and deliberately not role="status", which belongs to the loading view.
+		expect(count).toHaveAttribute("aria-live", "polite");
+		expect(count).not.toHaveAttribute("role", "status");
 		expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1);
 	});
 
@@ -125,6 +128,16 @@ describe('ProductListings Component', () => {
 
 		expect(screen.getByRole("searchbox")).toHaveValue("");
 		expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+	});
+
+	it('returns focus to the search box after clearing, instead of dropping it when the button goes', async () => {
+		renderListings(mockProducts);
+		await typeSearch("zzz");
+
+		await user().click(screen.getByRole("button", { name: "Clear search" }));
+		passDebounce();
+
+		expect(screen.getByRole("searchbox")).toHaveFocus();
 	});
 
 	it('explains an empty catalogue without offering to clear a search', () => {

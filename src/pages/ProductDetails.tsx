@@ -58,7 +58,7 @@ const ProductDetails = () => {
 					<p className="mt-6 max-w-[65ch] text-pretty text-slate-600 dark:text-slate-400">
 						{product.description}
 					</p>
-					<div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+					<div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
 						<QuantityStepper
 							value={quantity}
 							onIncrement={increment}
