@@ -1,22 +1,12 @@
 const breakImage = "/stickers/break.png";
 const itsnotabugImage = "/stickers/itsnotabug.png";
 const EatSleepCodeImage = "/stickers/EatSleepCode.png";
-const BreakingCodeImage = "/stickers/BreakingCode.png";
 const youaremycssImage = "/stickers/youaremycss.png";
 const CoolAstraunautImage = "/stickers/CoolAstraunaut.png";
-const MbappeImage = "/stickers/Mbappe.png";
-const ronaldoImage = "/stickers/ronaldo.png";
 const MyDrivingScaresMeTooImage = "/stickers/MyDrivingScaresMeToo.png";
-const HouseOfTheDragonSymbolImage = "/stickers/HouseOfTheDragonSymbol.png";
-const SquidGameImage = "/stickers/SquidGame.png";
-const ShinchanImage = "/stickers/Shinchan.png";
 const GameOverImage = "/stickers/GameOver.png";
-const MessiImage = "/stickers/Messi.png";
-const ViratImage = "/stickers/Virat.png";
 const LazyCatImage = "/stickers/LazyCat.png";
 const OverThinkerImage = "/stickers/OverThinker.png";
-const NarutoImage = "/stickers/Naruto.png";
-const GokuImage = "/stickers/Goku.png";
 const IamOkayImage = "/stickers/IamOkay.png";
 const BooImage = "/stickers/Boo.png";
 const EwFeelingsImage = "/stickers/EwFeelings.png";
@@ -54,28 +44,12 @@ const products = [
     imageUrl: EatSleepCodeImage,
   },
   {
-    productId: 5,
-    name: "CodeSmasher",
-    description: "Fearless developer!",
-    price: 7.5,
-    popularity: "88",
-    imageUrl: BreakingCodeImage,
-  },
-  {
     productId: 6,
     name: "CodeMate",
     description: "Without you, I'm incomplete!",
     price: 2.0,
     popularity: "79",
     imageUrl: youaremycssImage,
-  },
-  {
-    productId: 7,
-    name: "Mbappé",
-    description: "Phenomenal!",
-    price: 8.0,
-    popularity: "55",
-    imageUrl: MbappeImage,
   },
   {
     productId: 8,
@@ -86,14 +60,6 @@ const products = [
     imageUrl: CoolAstraunautImage,
   },
   {
-    productId: 9,
-    name: "Ronaldo",
-    description: "Legendary!",
-    price: 8.0,
-    popularity: "100",
-    imageUrl: ronaldoImage,
-  },
-  {
     productId: 10,
     name: "My Driving Scares Me Too",
     description: "They exist!",
@@ -102,52 +68,12 @@ const products = [
     imageUrl: MyDrivingScaresMeTooImage,
   },
   {
-    productId: 11,
-    name: "Three headed dragon symbol",
-    description: "Targaryen dynasty strength",
-    price: 9.0,
-    popularity: "98",
-    imageUrl: HouseOfTheDragonSymbolImage,
-  },
-  {
-    productId: 12,
-    name: "Squid Game",
-    description: "Lets play",
-    price: 5.0,
-    popularity: "70",
-    imageUrl: SquidGameImage,
-  },
-  {
-    productId: 13,
-    name: "Shin-Chan",
-    description: "Mischievous!",
-    price: 5.0,
-    popularity: "70",
-    imageUrl: ShinchanImage,
-  },
-  {
     productId: 14,
     name: "Game over",
     description: "Game over!",
     price: 5.0,
     popularity: "50",
     imageUrl: GameOverImage,
-  },
-  {
-    productId: 15,
-    name: "Messi",
-    description: "Magical!",
-    price: 10.0,
-    popularity: "99",
-    imageUrl: MessiImage,
-  },
-  {
-    productId: 16,
-    name: "Virat Kohli",
-    description: "King",
-    price: 9.0,
-    popularity: "99",
-    imageUrl: ViratImage,
   },
   {
     productId: 17,
@@ -164,22 +90,6 @@ const products = [
     price: 4.0,
     popularity: "50",
     imageUrl: OverThinkerImage,
-  },
-  {
-    productId: 19,
-    name: "Naruto",
-    description: "Ninja!",
-    price: 6.0,
-    popularity: "60",
-    imageUrl: NarutoImage,
-  },
-  {
-    productId: 20,
-    name: "Goku",
-    description: "Warrior!",
-    price: 6.0,
-    popularity: "60",
-    imageUrl: GokuImage,
   },
   {
     productId: 21,
