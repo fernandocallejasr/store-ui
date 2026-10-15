@@ -3,6 +3,13 @@
 React + TypeScript storefront for the Sticker Store, built with Vite, React
 Router (data router), Tailwind CSS and Vitest.
 
+> **About the live demo:** the deployed site runs on mock data
+> (`VITE_USE_MOCK_PRODUCTS=true`) because the backend is not hosted. Browsing the
+> catalogue, product pages and the cart all work. Sign-in, registration and the
+> profile page need the API, so they fail on the demo — an error such as
+> "Incorrect username or password." there does not mean the credentials were
+> wrong. To try the full app, run it locally with the [backend](#backend).
+
 ## Getting started
 
 ```bash
@@ -18,6 +25,23 @@ npm run dev
 | `npm run test` | Vitest, single run |
 | `npm run test:ui` | Vitest in watch mode |
 | `npm run coverage` | Vitest with coverage |
+
+## Backend
+
+This app talks to the Spring Boot API in
+[store-api](https://github.com/fernandocallejasr/store-api). The backend is not
+deployed, so to use the whole app run the two side by side:
+
+```bash
+# in store-api
+JWT_SECRET="$(openssl rand -base64 48)" ./mvnw spring-boot:run
+
+# in store-ui, with VITE_API_BASE_URL="http://localhost:8080/api/v1" in .env.development
+npm run dev
+```
+
+Login and registration always need the backend. Setting `VITE_USE_MOCK_PRODUCTS=true`
+serves only the product catalogue from local data.
 
 ## Environment
 
@@ -59,3 +83,11 @@ so `/cart` is a route while `/assets/index-abc.js` stays a file.
 `authRepository.login` validates the response body at runtime for the same
 class of problem: a 2xx does not guarantee the body is a `LoginResponse`, and a
 proxy error page or SPA fallback must fail loudly rather than silently.
+
+## Credits
+
+The project was built while following the Eazy Bytes full-stack React and Spring
+Boot course ([course repository](https://github.com/eazybytes/fullstack-react-springboot)). The sticker artwork
+in `public/stickers/` comes from that course and remains the property of its
+respective owners. Artwork depicting real people or third-party brands, shows and
+characters has been removed from this repository.
